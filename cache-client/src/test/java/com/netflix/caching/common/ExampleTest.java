@@ -1,4 +1,4 @@
-package com.netflix.template.common;
+package com.netflix.caching.common;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
