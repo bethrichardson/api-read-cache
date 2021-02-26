@@ -1,4 +1,4 @@
-package com.netflix.repositories.domain;
+package com.netflix.repositories.domain.metrics;
 
 import com.netflix.repositories.client.ResourcePaths;
 import com.netflix.repositories.common.RepositoryMetric;
@@ -23,7 +23,7 @@ public class RepositoryMetricsResource {
 
     @GetMapping("/{numRepositories}" + ResourcePaths.FORKS)
     public List<RepositoryMetric> forks(@PathVariable("numRepositories") Integer numRepositories) {
-        return githubService.getRepositoryMetrics(numRepositories);
+        return githubService.getForkMetrics(numRepositories);
     }
 
 }
