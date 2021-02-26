@@ -13,22 +13,20 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 @SuppressWarnings("PMD.BeanMembersShouldSerialize") // TODO: ideally this would be disabled for this project
-@Component
 @Slf4j
 public class GithubService {
 
-    @Autowired
     private RepositoryClient client;
 
-    public List<RepositoryMetric> getForkMetrics(int numRepositories) {
-        return getForkMetrics().subList(0, numRepositories);
+    public GithubService(RepositoryClient client) {
+        this.client = client;
     }
 
     public List<RepositoryMetric> getForkMetrics() {
         try {
             List<Repository> repositories = client.listOrganizationRepositories().get();
             return Metrics.ofForks(repositories);
-        } catch (InterruptedException | ExecutionException e) {
+        } catch (InterruptedException | ExecutionException | NullPointerException e) {
             log.warn("Failed to retrieve repository metrics.", e);
             return Collections.emptyList();
         }
