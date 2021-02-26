@@ -7,7 +7,7 @@ ext.githubProjectName = rootProject.name // Change if github project name is not
 
 subprojects {
     apply plugin: 'nebula.netflixoss'
-    group = "com.netflix.${githubProjectName}" // TEMPLATE: Set to organization of project
+    group = "com.netflix.${githubProjectName}"
 
     repositories {
         jcenter()
