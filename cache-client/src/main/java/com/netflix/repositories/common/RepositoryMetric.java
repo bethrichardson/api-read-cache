@@ -9,9 +9,13 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class RepositoryMetric {
+public class RepositoryMetric implements Comparable<RepositoryMetric> {
 
     private String name;
     private Integer count;
 
+    @Override
+    public int compareTo(RepositoryMetric o) {
+        return count - o.count;
+    }
 }
