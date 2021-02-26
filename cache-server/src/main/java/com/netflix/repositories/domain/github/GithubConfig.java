@@ -4,9 +4,11 @@ import com.spotify.github.v3.clients.GitHubClient;
 import com.spotify.github.v3.clients.RepositoryClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
 import java.net.URI;
 
+@Configuration
 public class GithubConfig {
 
     @Value("${GITHUB_API_TOKEN}")
@@ -24,6 +26,11 @@ public class GithubConfig {
     @Bean
     RepositoryClient repositoryClient() {
         return gitHubClient().createRepositoryClient(githubOrganization, null);
+    }
+
+    @Bean
+    GithubService githubService() {
+        return new GithubService(repositoryClient());
     }
 
 }

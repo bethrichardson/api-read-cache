@@ -19,11 +19,11 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 public class RepositoryMetricsResource {
 
     @Autowired
-    private GithubService githubService;
+    private MetricsService metricsService;
 
     @GetMapping("/{numRepositories}" + ResourcePaths.FORKS)
     public List<RepositoryMetric> forks(@PathVariable("numRepositories") Integer numRepositories) {
-        return githubService.getForkMetrics(numRepositories);
+        return metricsService.getForkMetrics(numRepositories);
     }
 
 }
