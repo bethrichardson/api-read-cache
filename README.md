@@ -18,6 +18,15 @@ To view all available gradle tasks, run the following command:
 
 ## Running
 
+To start the application locally:
+Set the `GITHUB_API_TOKEN` environment variable containing your GitHub API token
+
+```
+export GITHUB_API_TOKEN=<your_token_here>
+```
+You can get a new Personal Access Token from your 
+[GitHub Developer Settings](https://docs.github.com/en/github/authenticating-to-github/creating-a-personal-access-token).
+
 To start the application, run the following command, supplying the port on which you
 want to accept requests:
 ```

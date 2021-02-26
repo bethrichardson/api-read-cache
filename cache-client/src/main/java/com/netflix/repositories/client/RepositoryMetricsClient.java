@@ -18,6 +18,6 @@ import static com.netflix.repositories.client.ResourcePaths.VIEW;
 public interface RepositoryMetricsClient {
 
     @RequestLine("GET " + VIEW + "/{numResults}" + FORKS)
-    List<List<RepositoryMetric>> getTopRepositoriesByForks(@Param("numResults") Integer numResults);
+    List<RepositoryMetric> getTopRepositoriesByForks(@Param("numResults") Integer numResults);
 
 }
