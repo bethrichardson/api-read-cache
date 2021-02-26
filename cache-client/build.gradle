@@ -5,15 +5,9 @@ plugins {
 sourceCompatibility = JavaVersion.VERSION_1_8
 
 dependencies {
-    implementation 'javax.ws.rs:jsr311-api:1.1.1'
     implementation 'org.slf4j:slf4j-api:1.6.3'
-    testCompileOnly 'org.apiguardian:apiguardian-api:1.0.0'
     implementation "io.github.openfeign:feign-core:${feignVersion}"
     implementation "io.github.openfeign:feign-jackson:${feignVersion}"
     implementation "io.github.openfeign:feign-httpclient:${feignVersion}"
     implementation "org.springframework.boot:spring-boot-starter-web:${springBootVersion}"
-}
-
-test {
-    useJUnitPlatform()
 }
