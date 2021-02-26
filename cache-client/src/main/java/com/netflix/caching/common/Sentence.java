@@ -1,4 +1,4 @@
-package com.netflix.template.common;
+package com.netflix.caching.common;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;

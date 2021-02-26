@@ -1,7 +1,7 @@
-package com.netflix.template.server;
+package com.netflix.caching.server;
 
-import com.netflix.template.common.Conversation;
-import com.netflix.template.common.Sentence;
+import com.netflix.caching.common.Conversation;
+import com.netflix.caching.common.Sentence;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.DELETE;

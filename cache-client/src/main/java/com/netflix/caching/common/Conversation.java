@@ -1,4 +1,4 @@
-package com.netflix.template.common;
+package com.netflix.caching.common;
 
 /**
  * Hold a conversation.

@@ -1,7 +1,7 @@
-package com.netflix.template.client;
+package com.netflix.caching.client;
 
-import com.netflix.template.common.Conversation;
-import com.netflix.template.common.Sentence;
+import com.netflix.caching.common.Conversation;
+import com.netflix.caching.common.Sentence;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.api.client.filter.LoggingFilter;
