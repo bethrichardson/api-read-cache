@@ -1,2 +1,3 @@
-rootProject.name='gradle-template-master'
-include 'template-client','template-server'
+rootProject.name='api-read-cache'
+include 'cache-client',
+        'cache-server'
