@@ -1,5 +1,37 @@
-This project provides views for a set of repository metrics for a selected organization (Netflix) using the
-github API.
+# API Read Cache
+A GitHub API read caching service for Netflix organization data.
+The API Read Cache service caches selected GitHub API endpoints periodically to avoid overloading the GitHub API with requests. 
+The service proxies all GitHub API endpoints outside this set to GitHub.
+
+## API Reference
+
+### Caching APIs
+The service collects metrics every 5 minutes from the GitHub API
+and provides cached metrics at the following URLs:
+
+| Endpoint               | Description                                   |
+| ---------------------- | --------------------------------------------- |
+|`/`                     | Root node data for the github API             |
+|`/orgs/Netflix`         | Overview of data for the Netflix organization |
+|`/orgs/Netflix/repos`   | List of repositories for Netflix organization |
+|`/orgs/Netflix/members` | List of members for Netflix organization      |
+
+The service proxies all other paths directly to the GitHub API without caching
+values.
+
+### Metric View Endpoints
+The service provides a set of views for the latest repository metrics
+that can be accessed at the following URLs:
+
+| Endpoint                  | Description                                    |
+| ------------------------- | ---------------------------------------------- |
+|`/view/top/N/forks`        | Top-N repos by number of forks                 |
+|`/view/top/N/last_updated` | Top-N repos by updated time (most recent first)|
+|`/view/top/N/open_issues ` | Top-N repos by number of open issues           |
+`/view/top/N/stars`         | Top-N repos by number of stars                 |
+
+### Healthcheck
+The application will respond on `/healthcheck` with a 200 status when it is ready to receive requests.
 
 ## Building
 
@@ -53,35 +85,5 @@ To run all the tests, run the following command:
 ```
 ./gradlew check
 ```
-
-## API Reference
-
-### Caching APIs
-The service collects metrics every 5 minutes from the GitHub API
-and provides cached metrics at the following URLs:
-
-| Endpoint               | Description                                   |
-| ---------------------- | --------------------------------------------- |
-|`/`                     | Root node data for the github API             |
-|`/orgs/Netflix`         | Overview of data for the Netflix organization |
-|`/orgs/Netflix/repos`   | List of repositories for Netflix organization |
-|`/orgs/Netflix/members` | List of members for Netflix organization      |
-
-The service proxies all other paths directly to the GitHub API without caching
-values.
-
-### Metric View Endpoints
-The service provides a set of views for the latest repository metrics 
-that can be accessed at the following URLs:
-
-| Endpoint                  | Description                                    |
-| ------------------------- | ---------------------------------------------- |
-|`/view/top/N/forks`        | Top-N repos by number of forks                 |
-|`/view/top/N/last_updated` | Top-N repos by updated time (most recent first)|
-|`/view/top/N/open_issues ` | Top-N repos by number of open issues           |
-`/view/top/N/stars`         | Top-N repos by number of stars                 |
-
-### Healthcheck
-The application will respond on `/healthcheck` with a 200 status when it is ready to receive requests.
 
 
