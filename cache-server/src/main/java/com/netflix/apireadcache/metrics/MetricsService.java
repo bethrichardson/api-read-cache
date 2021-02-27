@@ -1,7 +1,7 @@
 package com.netflix.apireadcache.metrics;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.netflix.apireadcache.metrics.github.CachingGitHubClient;
+import com.netflix.apireadcache.metrics.github.ProxiedGitHubClient;
 import com.netflix.apireadcache.metrics.proxied.ProxiedMetricCache;
 import com.netflix.apireadcache.metrics.repositories.RepositoryMetricCache;
 import com.spotify.github.v3.repos.Repository;
@@ -24,7 +24,7 @@ public class MetricsService {
     private ProxiedMetricCache membersMetricCache;
 
     @Autowired
-    CachingGitHubClient gitHubClient;
+    ProxiedGitHubClient gitHubClient;
 
     @Autowired
     private RepositoryMetricCache repositoryCache;

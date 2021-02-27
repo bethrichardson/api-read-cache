@@ -11,7 +11,7 @@ import static com.netflix.apireadcache.client.ResourcePaths.ORGS;
         "Content-Type: application/json",
         "Accept: application/json",
 })
-public interface CachingGitHubClient {
+public interface ProxiedGitHubClient {
 
     @Headers({"Content-Type: application/json", "Accept: application/json"})
     @RequestLine("GET ")

@@ -1,6 +1,6 @@
 package com.netflix.apireadcache.metrics.proxied;
 
-import com.netflix.apireadcache.metrics.github.CachingGitHubClient;
+import com.netflix.apireadcache.metrics.github.ProxiedGitHubClient;
 import com.netflix.apireadcache.metrics.github.GithubConfig;
 import com.netflix.apireadcache.metrics.github.GithubCredentials;
 import org.springframework.context.annotation.Bean;
@@ -14,7 +14,7 @@ import org.springframework.context.annotation.Import;
 public class ProxiedMetricsConfig {
 
     @Bean
-    public ProxiedMetricCache overviewMetricCache(CachingGitHubClient client) {
+    public ProxiedMetricCache overviewMetricCache(ProxiedGitHubClient client) {
         ProxiedMetricCollector collector = new ProxiedMetricCollector(()-> new ProxiedMetric(client.getOverview()));
         ProxiedMetricCache cache = new ProxiedMetricCache(collector);
         cache.initializeCache();
@@ -22,7 +22,7 @@ public class ProxiedMetricsConfig {
     }
 
     @Bean
-    public ProxiedMetricCache organizationMetricCache(CachingGitHubClient client, GithubCredentials credentials) {
+    public ProxiedMetricCache organizationMetricCache(ProxiedGitHubClient client, GithubCredentials credentials) {
         ProxiedMetricCollector collector = new ProxiedMetricCollector(()-> new ProxiedMetric(client.getOrganization(credentials.getOrganization())));
         ProxiedMetricCache cache = new ProxiedMetricCache(collector);
         cache.initializeCache();
@@ -30,7 +30,7 @@ public class ProxiedMetricsConfig {
     }
 
     @Bean
-    public ProxiedMetricCache membersMetricCache(CachingGitHubClient client, GithubCredentials credentials) {
+    public ProxiedMetricCache membersMetricCache(ProxiedGitHubClient client, GithubCredentials credentials) {
         ProxiedMetricCollector collector = new ProxiedMetricCollector(()-> new ProxiedMetric(client.getOrganizationMembers(credentials.getOrganization())));
         ProxiedMetricCache cache = new ProxiedMetricCache(collector);
         cache.initializeCache();

@@ -1,6 +1,6 @@
 package com.netflix.apireadcache.config;
 
-import com.netflix.apireadcache.client.MetricsCachingClient;
+import com.netflix.apireadcache.client.ApiReadCache;
 import feign.Feign;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -9,10 +9,10 @@ import org.springframework.context.annotation.Configuration;
 public class ClientConfig {
 
     @Bean
-    public MetricsCachingClient repositoryMetricsClient() {
+    public ApiReadCache repositoryMetricsClient() {
         return Feign.builder()
                 .decoder(new JsonOrTextDecoder())
-                .target(MetricsCachingClient.class, "http://localhost:10000"); // TODO: configurable ports
+                .target(ApiReadCache.class, "http://localhost:10000"); // TODO: configurable ports
     }
 
 }
