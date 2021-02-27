@@ -15,6 +15,8 @@ import org.springframework.context.annotation.Import;
 
 import java.net.URI;
 
+import static com.netflix.apireadcache.metrics.github.GithubConfig.NETFLIX;
+
 @Configuration
 @Import({
         GithubConfig.class
@@ -27,8 +29,8 @@ public class RepositoryMetricsConfig {
     }
 
     @Bean
-    RepositoryClient repositoryClient(GitHubClient gitHubClient, GithubCredentials credentials) {
-        return gitHubClient.createRepositoryClient(credentials.getOrganization(), null);
+    RepositoryClient repositoryClient(GitHubClient gitHubClient) {
+        return gitHubClient.createRepositoryClient(NETFLIX, null);
     }
 
     @Bean

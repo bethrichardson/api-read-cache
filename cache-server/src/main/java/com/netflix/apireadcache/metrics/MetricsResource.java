@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
+import static com.netflix.apireadcache.client.ResourcePaths.NETFLIX;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @Slf4j
@@ -28,7 +29,7 @@ public class MetricsResource {
     /**
      * Only returns data for Netflix repositories.
      */
-    @GetMapping(path = ResourcePaths.ORGS + "/Netflix")
+    @GetMapping(path = ResourcePaths.ORGS + NETFLIX)
     public Object organization() {
         return metricsService.getOrganization();
     }
@@ -37,7 +38,7 @@ public class MetricsResource {
      * Only returns data for Netflix repositories.
      */
     @SneakyThrows
-    @GetMapping(path = ResourcePaths.ORGS + "/Netflix" + ResourcePaths.REPOS)
+    @GetMapping(path = ResourcePaths.ORGS + NETFLIX + ResourcePaths.REPOS)
     public Object repositories() {
         return metricsService.getRepositoriesAsJsonString();
     }
@@ -45,7 +46,7 @@ public class MetricsResource {
     /**
      * Only returns data for Netflix repositories.
      */
-    @GetMapping(path = ResourcePaths.ORGS + "/Netflix" + ResourcePaths.MEMBERS)
+    @GetMapping(path = ResourcePaths.ORGS + NETFLIX + ResourcePaths.MEMBERS)
     public Object members() {
         return metricsService.getMembers();
     }

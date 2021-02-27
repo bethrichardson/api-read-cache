@@ -71,10 +71,9 @@ You can configure the following options by either passing them to the bootRun pr
 or by setting them using the usage format in the following table in the
 `application.properties` file.
 
-| Option           | Description                   | Usage              |
-| ---------------- | -------------------------------------------------- | -------------------
+| Option           | Description                                                        | Usage                       |
+| ---------------- | ------------------------------------------------------------------ | --------------------------- |
 |port              | Configure the port used by the running application. Default is 8080| `server.port=<port_number>` |
-|organization (_Optional_)| Configure the root organization used for all metricTuples from GitHub. Default is Netflix| `github.organization=<org_name>` |
 
 
 ## Testing
