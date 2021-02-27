@@ -1,11 +1,8 @@
 package com.netflix.apireadcache.metrics;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.netflix.apireadcache.metrics.github.ProxiedGitHubClient;
 import com.netflix.apireadcache.metrics.proxied.ProxiedMetricCache;
 import com.netflix.apireadcache.metrics.repositories.RepositoryMetricCache;
-import com.spotify.github.v3.repos.Repository;
-import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -27,10 +24,10 @@ public class MetricsService {
     ProxiedGitHubClient gitHubClient;
 
     @Autowired
-    private RepositoryMetricCache repositoryCache;
+    private RepositoryMetricCache repositoryMetricCache;
 
     @Autowired
-    private ObjectMapper githubObjectMapper;
+    private ProxiedMetricCache repositoryViewCache;
 
     public Object getOverview() {
         return overviewMetricCache.getMetric().getValue();
@@ -48,29 +45,23 @@ public class MetricsService {
         return gitHubClient.getUnhandledRoute(path);
     }
 
-    public List<Repository> getRepositories() {
-        return repositoryCache.getMetric().getValue();
+    public Object getRepositories() {
+        return repositoryViewCache.getMetric().getValue();
     }
-
-    @SneakyThrows
-    public String getRepositoriesAsJsonString() {
-        return githubObjectMapper.writeValueAsString(getRepositories());
-    }
-
     public List<MetricTuple> getTopMetricsByForkCount(int numRepos) {
-        return repositoryCache.getView(ViewType.FORKS, numRepos);
+        return repositoryMetricCache.getView(ViewType.FORKS, numRepos);
     }
 
     public List<MetricTuple> getTopMetricsByLastUpdated(int numRepos) {
-        return repositoryCache.getView(ViewType.LAST_UPDATED, numRepos);
+        return repositoryMetricCache.getView(ViewType.LAST_UPDATED, numRepos);
     }
 
     public List<MetricTuple> getMetricsByOpenIssues(int numRepos) {
-        return repositoryCache.getView(ViewType.OPEN_ISSUES, numRepos);
+        return repositoryMetricCache.getView(ViewType.OPEN_ISSUES, numRepos);
     }
 
     public List<MetricTuple> getTopMetricsByStars(int numRepos) {
-        return repositoryCache.getView(ViewType.STARS, numRepos);
+        return repositoryMetricCache.getView(ViewType.STARS, numRepos);
     }
 
     /**
@@ -81,7 +72,8 @@ public class MetricsService {
         overviewMetricCache.refreshData();
         organizationMetricCache.refreshData();
         membersMetricCache.refreshData();
-        repositoryCache.refreshData();
+        repositoryMetricCache.refreshData();
+        repositoryViewCache.refreshData();
     }
 
 }

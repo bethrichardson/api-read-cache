@@ -49,15 +49,4 @@ public class RepositoryMetricsConfig {
         return ViewType.values();
     }
 
-    /**
-     * Visibility set to ANY to allow serializing Repository objects
-     * with com.spotify.github.GitHubInstant
-     */
-    @Bean
-    ObjectMapper githubObjectMapper() {
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
-        return objectMapper;
-    }
-
 }

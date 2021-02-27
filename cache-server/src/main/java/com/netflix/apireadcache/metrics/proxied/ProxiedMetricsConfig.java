@@ -38,4 +38,12 @@ public class ProxiedMetricsConfig {
         return cache;
     }
 
+    @Bean
+    public ProxiedMetricCache repositoryViewCache(ProxiedGitHubClient client) {
+        ProxiedMetricCollector collector = new ProxiedMetricCollector(()-> new ProxiedMetric(client.getRepositoryView(NETFLIX)));
+        ProxiedMetricCache cache = new ProxiedMetricCache(collector);
+        cache.initializeCache();
+        return cache;
+    }
+
 }
