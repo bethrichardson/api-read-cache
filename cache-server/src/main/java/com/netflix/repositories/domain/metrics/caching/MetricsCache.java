@@ -42,13 +42,12 @@ public class MetricsCache<T> extends ReloadingCache<T> {
     }
 
     @Override
-    void refreshData() {
+    public void refreshData() {
         Metric<T> metric = metricCollector.getMetric();
         if (metric != null) { // prefer to retain data
             updateAllViews(metric);
             cacheMetric(metric);
         }
-
     }
 
     protected void updateAllViews(Metric<T> metric) {

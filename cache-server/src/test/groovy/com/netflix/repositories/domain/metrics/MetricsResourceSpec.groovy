@@ -1,13 +1,8 @@
 package com.netflix.repositories.domain.metrics
 
-
 import com.netflix.repositories.ComponentTest
 import com.netflix.repositories.client.MetricsCachingClient
 import com.netflix.repositories.domain.metrics.github.CachingGitHubClient
-import com.netflix.repositories.domain.metrics.members.MembersMetricCache
-import com.netflix.repositories.domain.metrics.organization.OrganizationMetricCache
-import com.netflix.repositories.domain.metrics.overview.OverviewMetricCache
-import com.netflix.repositories.domain.metrics.repositories.RepositoryMetricCache
 import com.spotify.github.v3.clients.RepositoryClient
 import com.spotify.github.v3.repos.Repository
 import org.springframework.beans.factory.annotation.Autowired
@@ -28,16 +23,7 @@ class MetricsResourceSpec extends Specification implements MetricsTestingSupport
     CachingGitHubClient cachingGitHubClient
 
     @Autowired
-    RepositoryMetricCache repositoryCache
-
-    @Autowired
-    MembersMetricCache membersCache
-
-    @Autowired
-    OrganizationMetricCache organizationCache
-
-    @Autowired
-    OverviewMetricCache overviewCache
+    MetricsService metricsService
 
     def "should return a root node overview when requested"() {
         given:
@@ -50,7 +36,7 @@ class MetricsResourceSpec extends Specification implements MetricsTestingSupport
         '''
 
         when:
-        overviewCache.refreshData()
+        metricsService.refreshAllData()
 
         then:
         1 * cachingGitHubClient.getOverview() >> fakeResult
@@ -74,7 +60,7 @@ class MetricsResourceSpec extends Specification implements MetricsTestingSupport
         '''
 
         when:
-        organizationCache.refreshData()
+        metricsService.refreshAllData()
 
         then:
         1 * cachingGitHubClient.getOrganization("Netflix") >> fakeResult
@@ -97,7 +83,7 @@ class MetricsResourceSpec extends Specification implements MetricsTestingSupport
         '''
 
         when:
-        membersCache.refreshData()
+        metricsService.refreshAllData()
 
         then:
         1 * cachingGitHubClient.getOrganizationMembers("Netflix") >> fakeResult
@@ -114,7 +100,7 @@ class MetricsResourceSpec extends Specification implements MetricsTestingSupport
         List<Repository> expectedList = buildRepositoryList(10)
 
         when:
-        repositoryCache.refreshData()
+        metricsService.refreshAllData()
 
         then:
         1 * spotifyGitHubClient.listOrganizationRepositories() >> CompletableFuture.completedFuture(expectedList)
@@ -132,7 +118,7 @@ class MetricsResourceSpec extends Specification implements MetricsTestingSupport
         List<Repository> expectedList = buildRepositoryList(10)
 
         when:
-        repositoryCache.refreshData()
+        metricsService.refreshAllData()
 
         then:
         1 * spotifyGitHubClient.listOrganizationRepositories() >> CompletableFuture.completedFuture(expectedList)
@@ -149,7 +135,7 @@ class MetricsResourceSpec extends Specification implements MetricsTestingSupport
         int numberRepos = 5
 
         when:
-        repositoryCache.refreshData()
+        metricsService.refreshAllData()
 
         then:
         1 * spotifyGitHubClient.listOrganizationRepositories() >> { throw new InterruptedException() }
@@ -167,7 +153,7 @@ class MetricsResourceSpec extends Specification implements MetricsTestingSupport
         List<Repository> expectedList = buildRepositoryList(3)
 
         when:
-        repositoryCache.refreshData()
+        metricsService.refreshAllData()
 
         then:
         1 * spotifyGitHubClient.listOrganizationRepositories() >> CompletableFuture.completedFuture(expectedList)

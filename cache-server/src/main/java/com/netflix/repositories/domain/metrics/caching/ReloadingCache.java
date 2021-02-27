@@ -44,6 +44,6 @@ public abstract class ReloadingCache<T> {
         return refreshInterval;
     }
 
-    abstract void refreshData();
+    abstract public void refreshData();
 
 }

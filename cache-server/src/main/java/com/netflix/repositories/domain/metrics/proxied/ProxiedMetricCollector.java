@@ -1,12 +1,18 @@
 package com.netflix.repositories.domain.metrics.proxied;
 
 import com.netflix.repositories.domain.metrics.MetricCollector;
-import lombok.extern.slf4j.Slf4j;
+import lombok.AllArgsConstructor;
 
-@Slf4j
-public abstract class ProxiedMetricCollector implements MetricCollector<Object> {
+import java.util.function.Supplier;
+
+@AllArgsConstructor
+public class ProxiedMetricCollector implements MetricCollector<Object> {
+
+    Supplier<ProxiedMetric> getMetricProvider;
 
     @Override
-    public abstract ProxiedMetric getMetric();
+    public ProxiedMetric getMetric() {
+        return getMetricProvider.get();
+    }
 
 }

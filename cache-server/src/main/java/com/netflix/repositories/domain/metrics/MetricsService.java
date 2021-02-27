@@ -1,9 +1,7 @@
 package com.netflix.repositories.domain.metrics;
 
 import com.netflix.repositories.common.MetricTuple;
-import com.netflix.repositories.domain.metrics.members.MembersMetricCache;
-import com.netflix.repositories.domain.metrics.organization.OrganizationMetricCache;
-import com.netflix.repositories.domain.metrics.overview.OverviewMetricCache;
+import com.netflix.repositories.domain.metrics.proxied.ProxiedMetricCache;
 import com.netflix.repositories.domain.metrics.repositories.RepositoryMetricCache;
 import com.spotify.github.v3.repos.Repository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,27 +13,27 @@ import java.util.List;
 public class MetricsService {
 
     @Autowired
+    private ProxiedMetricCache overviewMetricCache;
+
+    @Autowired
+    private ProxiedMetricCache organizationMetricCache;
+
+    @Autowired
+    private ProxiedMetricCache membersMetricCache;
+
+    @Autowired
     private RepositoryMetricCache repositoryCache;
 
-    @Autowired
-    private MembersMetricCache membersCache;
-
-    @Autowired
-    private OrganizationMetricCache organizationCache;
-
-    @Autowired
-    private OverviewMetricCache overviewCache;
-
     public Object getOverview() {
-        return overviewCache.getMetric().getValue();
+        return overviewMetricCache.getMetric().getValue();
     }
 
     public Object getOrganization() {
-        return organizationCache.getMetric().getValue();
+        return organizationMetricCache.getMetric().getValue();
     }
 
     public Object getMembers() {
-        return membersCache.getMetric().getValue();
+        return membersMetricCache.getMetric().getValue();
     }
 
     public List<Repository> getRepositories() {
@@ -44,6 +42,17 @@ public class MetricsService {
 
     public List<MetricTuple> getForkMetrics(int numRepos) {
         return repositoryCache.getView(ViewType.FORKS, numRepos);
+    }
+
+    /**
+     * This could be exposed to clear the cache via service call with
+     * appropriate access control.
+     */
+    public void refreshAllData() {
+        overviewMetricCache.refreshData();
+        organizationMetricCache.refreshData();
+        membersMetricCache.refreshData();
+        repositoryCache.refreshData();
     }
 
 }
