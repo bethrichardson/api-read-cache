@@ -13,7 +13,7 @@ import static com.netflix.apireadcache.client.ResourcePaths.*;
         "Content-Type: application/json",
         "Accept: application/json",
 })
-public interface MetricsCachingClient {
+public interface ApiReadCache {
 
     @RequestLine("GET ")
     Object getOverview();

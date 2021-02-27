@@ -28,10 +28,10 @@ public class GithubConfig {
     }
 
     @Bean
-    public CachingGitHubClient cachingGithubClient() {
+    public ProxiedGitHubClient cachingGithubClient() {
         return Feign.builder()
                 .decoder(new JsonOrTextDecoder())
-                .target(CachingGitHubClient.class, ResourcePaths.GIT_HUB_API);
+                .target(ProxiedGitHubClient.class, ResourcePaths.GIT_HUB_API);
     }
 
 }

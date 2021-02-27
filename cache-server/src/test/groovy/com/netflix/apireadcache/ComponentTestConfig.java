@@ -1,7 +1,7 @@
 package com.netflix.apireadcache;
 
 import com.netflix.apireadcache.config.ClientConfig;
-import com.netflix.apireadcache.metrics.github.CachingGitHubClient;
+import com.netflix.apireadcache.metrics.github.ProxiedGitHubClient;
 import com.spotify.github.v3.clients.GitHubClient;
 import com.spotify.github.v3.clients.RepositoryClient;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -30,8 +30,8 @@ public class ComponentTestConfig {
 
     @Bean
     @Primary
-    public CachingGitHubClient mockCachingGitHubClient() {
-        return mockFactory.Mock(CachingGitHubClient.class);
+    public ProxiedGitHubClient mockCachingGitHubClient() {
+        return mockFactory.Mock(ProxiedGitHubClient.class);
     }
 
     @Bean

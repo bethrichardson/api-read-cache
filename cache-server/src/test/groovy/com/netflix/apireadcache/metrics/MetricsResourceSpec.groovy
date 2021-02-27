@@ -2,8 +2,8 @@ package com.netflix.apireadcache.metrics
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.netflix.apireadcache.ComponentTest
-import com.netflix.apireadcache.client.MetricsCachingClient
-import com.netflix.apireadcache.metrics.github.CachingGitHubClient
+import com.netflix.apireadcache.client.ApiReadCache
+import com.netflix.apireadcache.metrics.github.ProxiedGitHubClient
 import com.spotify.github.v3.clients.RepositoryClient
 import com.spotify.github.v3.repos.Repository
 import org.springframework.beans.factory.annotation.Autowired
@@ -15,13 +15,13 @@ import java.util.concurrent.CompletableFuture
 class MetricsResourceSpec extends Specification implements MetricsTestingSupport {
 
     @Autowired
-    MetricsCachingClient metricsCachingClient
+    ApiReadCache metricsCachingClient
 
     @Autowired
     RepositoryClient spotifyGitHubClient
 
     @Autowired
-    CachingGitHubClient cachingGitHubClient
+    ProxiedGitHubClient cachingGitHubClient
 
     @Autowired
     MetricsService metricsService
