@@ -46,7 +46,7 @@ class MetricsCacheSpec extends Specification implements MetricsTestingSupport {
         cache.initializeCache()
 
         then:
-        new PollingConditions(delay: 1, timeout: 1).eventually {
+        new PollingConditions(delay: 1, timeout: 2).eventually {
             metricsCollector.interactionCount > 2
         }
 

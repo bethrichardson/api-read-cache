@@ -206,4 +206,22 @@ class MetricsResourceSpec extends Specification implements MetricsTestingSupport
         assert actualList.size() == numberRepos
     }
 
+    def "should return a list of top N repositories by number of open issues"() {
+        given:
+        int numberRepos = 5
+        List<Repository> expectedList = buildRepositoryList(10)
+
+        when:
+        metricsService.refreshAllData()
+
+        then:
+        1 * spotifyGitHubClient.listOrganizationRepositories() >> CompletableFuture.completedFuture(expectedList)
+
+        when:
+        List<List<Object>> actualList = metricsCachingClient.getTopRepositoriesByOpenIssueCount(numberRepos)
+
+        then:
+        assert actualList.size() == numberRepos
+    }
+
 }

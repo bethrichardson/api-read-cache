@@ -69,6 +69,14 @@ public class MetricsResource {
                 .collect(Collectors.toList());
     }
 
+    @GetMapping(ResourcePaths.VIEW + "/{numRepositories}" + ResourcePaths.OPEN_ISSUES)
+    public List<List<Object>> openIssues(@PathVariable("numRepositories") Integer numRepositories) {
+        return metricsService.getMetricsByOpenIssues(numRepositories)
+                .stream()
+                .map(MetricTuple::getAsTuple)
+                .collect(Collectors.toList());
+    }
+
     @RequestMapping(value="**",method = RequestMethod.GET)
     public Object proxyOtherRequests(final HttpServletRequest request){
         String path = request.getRequestURI();
