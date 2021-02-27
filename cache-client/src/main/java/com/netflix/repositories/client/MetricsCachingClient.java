@@ -31,12 +31,15 @@ public interface MetricsCachingClient {
     Object getOrganizationRepos(@Param("organizationName") String organizationName);
 
     @RequestLine("GET " + VIEW + "/{numResults}" + FORKS)
-    List<List<Object>> getTopRepositoriesByForks(@Param("numResults") Integer numResults);
+    List<List<Object>> getTopRepositoriesByForkCount(@Param("numResults") Integer numResults);
 
     @RequestLine("GET " + VIEW + "/{numResults}" + LAST_UPDATED)
     List<List<Object>> getTopRepositoriesByLastUpdated(@Param("numResults") Integer numResults);
 
     @RequestLine("GET " + VIEW + "/{numResults}" + OPEN_ISSUES)
     List<List<Object>> getTopRepositoriesByOpenIssueCount(@Param("numResults") Integer numResults);
+
+    @RequestLine("GET " + VIEW + "/{numResults}" + STARS)
+    List<List<Object>> getTopRepositoriesByStarCount(@Param("numResults") Integer numResults);
 
 }

@@ -4,6 +4,7 @@ public enum ViewType {
 
     FORKS,
     LAST_UPDATED,
-    OPEN_ISSUES
+    OPEN_ISSUES,
+    STARS
 
 }
