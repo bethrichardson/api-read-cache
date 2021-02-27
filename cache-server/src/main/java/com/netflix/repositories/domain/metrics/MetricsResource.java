@@ -22,20 +22,10 @@ public class MetricsResource {
     @Autowired
     private MetricsService metricsService;
 
-    @GetMapping(ResourcePaths.VIEW + "/{numRepositories}" + ResourcePaths.FORKS)
-    public List<List<Object>> forks(@PathVariable("numRepositories") Integer numRepositories) {
-        return metricsService.getForkMetrics(numRepositories)
-                .stream()
-                .map(MetricTuple::getAsTuple)
-                .collect(Collectors.toList());
-    }
 
-    /**
-     * Only returns data for Netflix repositories.
-     */
-    @GetMapping(path = ResourcePaths.ORGS + "/Netflix" + ResourcePaths.REPOS, produces = MediaType.TEXT_PLAIN_VALUE)
-    public String repositories() {
-        return metricsService.getRepositories().toString();
+    @GetMapping
+    public Object overview() {
+        return metricsService.getOverview();
     }
 
     /**
@@ -49,10 +39,27 @@ public class MetricsResource {
     /**
      * Only returns data for Netflix repositories.
      */
+    @GetMapping(path = ResourcePaths.ORGS + "/Netflix" + ResourcePaths.REPOS, produces = MediaType.TEXT_PLAIN_VALUE)
+    public String repositories() {
+        return metricsService.getRepositories().toString();
+    }
+
+    /**
+     * Only returns data for Netflix repositories.
+     */
     @GetMapping(path = ResourcePaths.ORGS + "/Netflix" + ResourcePaths.MEMBERS)
     public Object members() {
         return metricsService.getMembers();
     }
+
+    @GetMapping(ResourcePaths.VIEW + "/{numRepositories}" + ResourcePaths.FORKS)
+    public List<List<Object>> forks(@PathVariable("numRepositories") Integer numRepositories) {
+        return metricsService.getForkMetrics(numRepositories)
+                .stream()
+                .map(MetricTuple::getAsTuple)
+                .collect(Collectors.toList());
+    }
+
 
 
 }

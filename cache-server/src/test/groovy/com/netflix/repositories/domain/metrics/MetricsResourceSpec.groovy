@@ -6,6 +6,7 @@ import com.netflix.repositories.client.MetricsCachingClient
 import com.netflix.repositories.domain.metrics.github.CachingGitHubClient
 import com.netflix.repositories.domain.metrics.members.MembersMetricCache
 import com.netflix.repositories.domain.metrics.organization.OrganizationMetricCache
+import com.netflix.repositories.domain.metrics.overview.OverviewMetricCache
 import com.netflix.repositories.domain.metrics.repositories.RepositoryMetricCache
 import com.spotify.github.v3.clients.RepositoryClient
 import com.spotify.github.v3.repos.Repository
@@ -35,21 +36,30 @@ class MetricsResourceSpec extends Specification implements MetricsTestingSupport
     @Autowired
     OrganizationMetricCache organizationCache
 
-    def "should return a flat list of repos when requested"() {
+    @Autowired
+    OverviewMetricCache overviewCache
+
+    def "should return a root node overview when requested"() {
         given:
-        List<Repository> expectedList = buildRepositoryList(10)
+        Object fakeResult = '''
+            {
+                "current_user_url": "https://api.github.com/user",
+                "current_user_authorizations_html_url": "https://github.com/settings/connections/applications{/client_id}",
+                "authorizations_url": "https://api.github.com/authorizations"
+            }
+        '''
 
         when:
-        repositoryCache.refreshData()
+        overviewCache.refreshData()
 
         then:
-        1 * spotifyGitHubClient.listOrganizationRepositories() >> CompletableFuture.completedFuture(expectedList)
+        1 * cachingGitHubClient.getOverview() >> fakeResult
 
         when:
-        String actualList = metricsCachingClient.getOrganizationRepos("Netflix")
+        Object actual = metricsCachingClient.getOverview()
 
         then:
-        assert actualList == expectedList.toString()
+        assert actual.toString().contains("https://api.github.com")
     }
 
     def "should return an organization overview when requested"() {
@@ -97,6 +107,23 @@ class MetricsResourceSpec extends Specification implements MetricsTestingSupport
 
         then:
         assert actual.toString().contains("fakeid")
+    }
+
+    def "should return a flat list of repos when requested"() {
+        given:
+        List<Repository> expectedList = buildRepositoryList(10)
+
+        when:
+        repositoryCache.refreshData()
+
+        then:
+        1 * spotifyGitHubClient.listOrganizationRepositories() >> CompletableFuture.completedFuture(expectedList)
+
+        when:
+        String actualList = metricsCachingClient.getOrganizationRepos("Netflix")
+
+        then:
+        assert actualList == expectedList.toString()
     }
 
     def "should return a list of top N forks"() {
