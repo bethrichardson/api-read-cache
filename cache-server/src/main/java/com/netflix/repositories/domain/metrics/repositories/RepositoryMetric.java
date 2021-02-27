@@ -21,10 +21,10 @@ public class RepositoryMetric implements Metric<List<Repository>> {
     @Override
     public Map<ViewType, List<MetricTuple>> getViews() {
         Map<ViewType, List<MetricTuple>> views = new HashMap<>();
-        addView(views, ViewType.FORKS, RepositoryMetric::getForkMetrics);
-        addView(views, ViewType.LAST_UPDATED, RepositoryMetric::getLastUpdatedMetrics);
-        addView(views, ViewType.OPEN_ISSUES, RepositoryMetric::getOpenIssueMetrics);
-        addView(views, ViewType.STARS, RepositoryMetric::getStarMetrics);
+        addView(views, ViewType.FORKS, repo -> RepositoryMetric.getMetrics(repo, RepositoryMetric::getNumberForks));
+        addView(views, ViewType.LAST_UPDATED, repo -> RepositoryMetric.getMetrics(repo, RepositoryMetric::getLastUpdated));
+        addView(views, ViewType.OPEN_ISSUES, repo -> RepositoryMetric.getMetrics(repo, RepositoryMetric::getOpenIssues));
+        addView(views, ViewType.STARS, repo -> RepositoryMetric.getMetrics(repo, RepositoryMetric::getNumberStars));
         return views;
     }
 
@@ -37,72 +37,50 @@ public class RepositoryMetric implements Metric<List<Repository>> {
         return value;
     }
 
-    public static MetricTuple getForkMetrics(Repository repository) {
-        if (repository.forksCount() != null) {
+
+    private static MetricTuple getMetrics(Repository repository, Function<Repository, Long> metricCollectionFunction) {
+        if (metricCollectionFunction.apply(repository) != null) {
             return MetricTuple.builder()
                     .name(repository.name())
-                    .count(Long.valueOf(repository.forksCount()))
+                    .count(metricCollectionFunction.apply(repository))
                     .build();
         }
         return MetricTuple.emptyResult();
     }
 
-    public static List<MetricTuple> getForkMetrics(List<Repository> repositories) {
+    private static List<MetricTuple> getMetrics(List<Repository> repositories, Function<Repository, Long> metricCollectionFunction) {
         return repositories.stream()
-                .map(RepositoryMetric::getForkMetrics)
+                .map(it -> getMetrics(it, metricCollectionFunction))
                 .sorted(Comparator.reverseOrder())
                 .collect(Collectors.toList());
     }
 
-    public static MetricTuple getLastUpdatedMetrics(Repository repository) {
+    public static Long getNumberForks(Repository repository) {
+        if (repository.forksCount()!= null) {
+            return Long.valueOf(repository.forksCount());
+        }
+        return null;
+    }
+
+    public static Long getLastUpdated(Repository repository) {
         if (repository.updatedAt() != null && repository.updatedAt().instant() != null) {
-            return MetricTuple.builder()
-                    .name(repository.name())
-                    .count(repository.updatedAt().instant().getEpochSecond())
-                    .build();
+            return repository.updatedAt().instant().getEpochSecond();
         }
-        return MetricTuple.emptyResult();
+        return null;
     }
 
-    public static List<MetricTuple> getLastUpdatedMetrics(List<Repository> repositories) {
-        return repositories.stream()
-                .map(RepositoryMetric::getLastUpdatedMetrics)
-                .sorted(Comparator.reverseOrder())
-                .collect(Collectors.toList());
-    }
-
-    public static List<MetricTuple> getOpenIssueMetrics(List<Repository> repositories) {
-        return repositories.stream()
-                .map(RepositoryMetric::getOpenIssueMetrics)
-                .sorted(Comparator.reverseOrder())
-                .collect(Collectors.toList());
-    }
-
-    public static MetricTuple getOpenIssueMetrics(Repository repository) {
-        if (repository.openIssuesCount() != null) {
-            return MetricTuple.builder()
-                    .name(repository.name())
-                    .count(Long.valueOf(repository.openIssuesCount()))
-                    .build();
+    public static Long getOpenIssues(Repository repository) {
+        if (repository.openIssuesCount()!= null) {
+            return Long.valueOf(repository.openIssuesCount());
         }
-        return MetricTuple.emptyResult();
+        return null;
     }
 
-    public static List<MetricTuple> getStarMetrics(List<Repository> repositories) {
-        return repositories.stream()
-                .map(RepositoryMetric::getOpenIssueMetrics)
-                .sorted(Comparator.reverseOrder())
-                .collect(Collectors.toList());
-    }
-
-    public static MetricTuple getStarMetrics(Repository repository) {
-        if (repository.stargazersCount() != null) {
-            return MetricTuple.builder()
-                    .name(repository.name())
-                    .count(Long.valueOf(repository.stargazersCount()))
-                    .build();
+    public static Long getNumberStars(Repository repository) {
+        if (repository.stargazersCount()!= null) {
+            return Long.valueOf(repository.stargazersCount());
         }
-        return MetricTuple.emptyResult();
+        return null;
     }
 
 }
