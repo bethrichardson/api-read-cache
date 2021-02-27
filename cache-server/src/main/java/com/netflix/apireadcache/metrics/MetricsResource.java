@@ -40,7 +40,7 @@ public class MetricsResource {
     @SneakyThrows
     @GetMapping(path = ResourcePaths.ORGS + NETFLIX + ResourcePaths.REPOS)
     public Object repositories() {
-        return metricsService.getRepositoriesAsJsonString();
+        return metricsService.getRepositories();
     }
 
     /**
