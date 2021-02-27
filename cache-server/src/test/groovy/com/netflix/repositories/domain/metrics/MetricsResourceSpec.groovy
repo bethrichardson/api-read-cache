@@ -2,7 +2,7 @@ package com.netflix.repositories.domain.metrics
 
 import com.netflix.repositories.ComponentTest
 import com.netflix.repositories.client.RepositoryMetricsClient
-import com.netflix.repositories.domain.metrics.caching.MetricsCache
+import com.netflix.repositories.domain.metrics.repositories.RepositoryMetricCache
 import com.spotify.github.v3.clients.RepositoryClient
 import com.spotify.github.v3.repos.Repository
 import org.springframework.beans.factory.annotation.Autowired
@@ -20,14 +20,14 @@ class MetricsResourceSpec extends Specification implements MetricsTestingSupport
     RepositoryClient gitHubClient
 
     @Autowired
-    MetricsCache cache
+    RepositoryMetricCache cache
 
     def "should return a flat list of repos when requested"() {
         given:
         List<Repository> expectedList = buildRepositoryList(10)
 
         when:
-        cache.updateAllValues()
+        cache.refreshData()
 
         then:
         1 * gitHubClient.listOrganizationRepositories() >> CompletableFuture.completedFuture(expectedList)
@@ -45,7 +45,7 @@ class MetricsResourceSpec extends Specification implements MetricsTestingSupport
         List<Repository> expectedList = buildRepositoryList(10)
 
         when:
-        cache.updateAllValues()
+        cache.refreshData()
 
         then:
         1 * gitHubClient.listOrganizationRepositories() >> CompletableFuture.completedFuture(expectedList)
@@ -62,7 +62,7 @@ class MetricsResourceSpec extends Specification implements MetricsTestingSupport
         int numberRepos = 5
 
         when:
-        cache.updateAllValues()
+        cache.refreshData()
 
         then:
         1 * gitHubClient.listOrganizationRepositories() >> { throw new InterruptedException() }
@@ -80,7 +80,7 @@ class MetricsResourceSpec extends Specification implements MetricsTestingSupport
         List<Repository> expectedList = buildRepositoryList(3)
 
         when:
-        cache.updateAllValues()
+        cache.refreshData()
 
         then:
         1 * gitHubClient.listOrganizationRepositories() >> CompletableFuture.completedFuture(expectedList)

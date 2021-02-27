@@ -1,6 +1,6 @@
-package com.netflix.repositories.domain.github;
+package com.netflix.repositories.domain.metrics.repositories;
 
-import com.netflix.repositories.domain.metrics.MetricsCollector;
+import com.netflix.repositories.domain.metrics.MetricCollector;
 import com.spotify.github.v3.clients.RepositoryClient;
 import com.spotify.github.v3.repos.Repository;
 import lombok.extern.slf4j.Slf4j;
@@ -11,28 +11,26 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
 @Slf4j
-public class GithubMetricsCollector implements MetricsCollector {
+public class RepositoryMetricCollector implements MetricCollector<List<Repository>> {
 
-    private RepositoryClient client;
+    private final RepositoryClient client;
 
-    public GithubMetricsCollector(RepositoryClient client) {
+    public RepositoryMetricCollector(RepositoryClient client) {
         this.client = client;
     }
 
     @Override
-    public List<Repository> getRepositories() {
+    public RepositoryMetric getMetric() {
         try {
             log.info("Retrieving repository data from GitHub.");
             CompletableFuture<List<Repository>> repoFuture = client.listOrganizationRepositories();
             if (repoFuture != null) {
-                return repoFuture.get();
-            } else {
-                return Collections.emptyList();
+                return new RepositoryMetric(repoFuture.get());
             }
         } catch (InterruptedException | ExecutionException e) {
             log.warn("Failed to retrieve repositories.", e);
-            return Collections.emptyList();
         }
+        return new RepositoryMetric(Collections.emptyList());
     }
 
 }

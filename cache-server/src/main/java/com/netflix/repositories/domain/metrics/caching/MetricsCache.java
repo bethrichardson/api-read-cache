@@ -1,55 +1,58 @@
 package com.netflix.repositories.domain.metrics.caching;
 
-import com.netflix.repositories.common.RepositoryMetric;
-import com.netflix.repositories.domain.metrics.MetricType;
-import com.netflix.repositories.domain.metrics.Metrics;
-import com.netflix.repositories.domain.metrics.MetricsCollector;
+import com.netflix.repositories.common.MetricTuple;
+import com.netflix.repositories.domain.metrics.Metric;
+import com.netflix.repositories.domain.metrics.MetricCollector;
 import com.netflix.repositories.domain.metrics.ViewType;
-import com.spotify.github.v3.repos.Repository;
-import lombok.SneakyThrows;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
-import static com.netflix.repositories.domain.metrics.MetricType.REPOSITORIES;
-import static com.netflix.repositories.domain.metrics.ViewType.FORKS;
+public class MetricsCache<T> extends ReloadingCache<T> {
 
-public class MetricsCache extends ReloadingCache {
+    private final MetricCollector<T> metricCollector;
 
-    private final MetricsCollector metricsCollector;
-
-    public MetricsCache(MetricsCollector metricsCollector) {
+    public MetricsCache(MetricCollector<T> metricCollector) {
         super();
-        this.metricsCollector = metricsCollector;
+        this.metricCollector = metricCollector;
     }
 
-    @SneakyThrows
-    private void cacheView(ViewType type, List<RepositoryMetric> metrics) {
-        viewCache.put(type, metrics);
+    protected void cacheMetric(Metric<T> response) {
+        metricsCache.set(response);
     }
 
-    @SneakyThrows
-    private void cacheMetric(MetricType type, Object response) {
-        metricsCache.put(type, response);
+    public Metric<T> getMetric() {
+        return metricsCache.get();
     }
 
-    @SneakyThrows
-    public List<RepositoryMetric> getView(ViewType viewType, int numResults) {
-        List<RepositoryMetric> metrics = viewCache.get(viewType);
-        if (metrics.size() > numResults) {
-            metrics = metrics.subList(0, numResults);
+    private void cacheView(ViewType type, List<MetricTuple> metricTuples) {
+        viewCache.put(type, metricTuples);
+    }
+
+    public List<MetricTuple> getView(ViewType viewType, int numResults) {
+        List<MetricTuple> metricTuples = viewCache.get(viewType);
+        if (metricTuples == null) {
+            return Collections.emptyList();
         }
-        return metrics;
-    }
-
-    public Object getMetric(MetricType metricType) {
-        return metricsCache.get(metricType);
+        if (metricTuples.size() > numResults) {
+            metricTuples = metricTuples.subList(0, numResults);
+        }
+        return metricTuples;
     }
 
     @Override
-    void updateAllValues() {
-        List<Repository> repositories = metricsCollector.getRepositories();
-        List<RepositoryMetric> forkMetrics = Metrics.ofForks(repositories);
-        cacheMetric(REPOSITORIES, repositories);
-        cacheView(FORKS, forkMetrics);
+    void refreshData() {
+        Metric<T> metric = metricCollector.getMetric();
+        if (metric != null) { // prefer to retain data
+            updateAllViews(metric);
+            cacheMetric(metric);
+        }
+
+    }
+
+    protected void updateAllViews(Metric<T> metric) {
+        Map<ViewType, List<MetricTuple>> views = metric.getViews();
+        views.forEach(this::cacheView);
     }
 }

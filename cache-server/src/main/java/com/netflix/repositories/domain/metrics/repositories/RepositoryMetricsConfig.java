@@ -1,7 +1,9 @@
-package com.netflix.repositories.domain.github;
+package com.netflix.repositories.domain.metrics.repositories;
 
+import com.netflix.repositories.domain.metrics.ViewType;
 import com.spotify.github.v3.clients.GitHubClient;
 import com.spotify.github.v3.clients.RepositoryClient;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -9,7 +11,7 @@ import org.springframework.context.annotation.Configuration;
 import java.net.URI;
 
 @Configuration
-public class GithubConfig {
+public class RepositoryMetricsConfig {
 
     @Value("${GITHUB_API_TOKEN}")
     private transient String apiToken;
@@ -29,8 +31,22 @@ public class GithubConfig {
     }
 
     @Bean
-    GithubMetricsCollector githubService(RepositoryClient repositoryClient) {
-        return new GithubMetricsCollector(repositoryClient);
+    RepositoryMetricCollector githubService(RepositoryClient repositoryClient) {
+        return new RepositoryMetricCollector(repositoryClient);
+    }
+
+    @Autowired
+    RepositoryMetricCollector repositoryMetricsCollector;
+
+    @Bean
+    public RepositoryMetricCache metricsCache() {
+        RepositoryMetricCache cache = new RepositoryMetricCache(repositoryMetricsCollector);
+        cache.initializeCache(supportedViews());
+        return cache;
+    }
+    
+    protected ViewType[] supportedViews() {
+        return ViewType.values();
     }
 
 }
