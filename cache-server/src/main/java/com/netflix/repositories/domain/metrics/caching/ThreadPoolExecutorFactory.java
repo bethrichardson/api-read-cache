@@ -2,7 +2,7 @@ package com.netflix.repositories.domain.metrics.caching;
 
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
-public class ThreadPoolExecutorFactory {
+public abstract class ThreadPoolExecutorFactory {
 
     public static ThreadPoolTaskExecutor build(String threadNamePrefix) {
         if (threadNamePrefix == null) {

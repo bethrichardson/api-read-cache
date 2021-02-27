@@ -29,8 +29,8 @@ public class GithubConfig {
     }
 
     @Bean
-    GithubService githubService() {
-        return new GithubService(repositoryClient());
+    GithubMetricsCollector githubService(RepositoryClient repositoryClient) {
+        return new GithubMetricsCollector(repositoryClient);
     }
 
 }

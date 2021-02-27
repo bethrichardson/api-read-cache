@@ -7,7 +7,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class Metrics {
+public abstract class Metrics {
 
     public static RepositoryMetric ofForks(Repository repository) {
         return RepositoryMetric.builder()
