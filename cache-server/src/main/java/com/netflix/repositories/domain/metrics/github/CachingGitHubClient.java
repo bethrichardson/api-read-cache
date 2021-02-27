@@ -14,6 +14,10 @@ import static com.netflix.repositories.client.ResourcePaths.ORGS;
 public interface CachingGitHubClient {
 
     @Headers({"Content-Type: application/json", "Accept: application/json"})
+    @RequestLine("GET " + ORGS + "/{organizationName}")
+    Object getOrganization(@Param("organizationName") String organizationName);
+
+    @Headers({"Content-Type: application/json", "Accept: application/json"})
     @RequestLine("GET " + ORGS + "/{organizationName}" + MEMBERS)
     Object getOrganizationMembers(@Param("organizationName") String organizationName);
 

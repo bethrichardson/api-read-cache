@@ -13,7 +13,7 @@ import static com.netflix.repositories.client.ResourcePaths.*;
         "Content-Type: application/json",
         "Accept: application/json",
 })
-public interface RepositoryMetricsClient {
+public interface MetricsCachingClient {
 
     @RequestLine("GET " + VIEW + "/{numResults}" + FORKS)
     List<List<Object>> getTopRepositoriesByForks(@Param("numResults") Integer numResults);
@@ -22,9 +22,13 @@ public interface RepositoryMetricsClient {
     @RequestLine("GET " + ORGS + "/{organizationName}" + REPOS)
     String getOrganizationRepos(@Param("organizationName") String organizationName);
 
+    @Headers({"Content-Type: application/json", "Accept: application/json"})
+    @RequestLine("GET " + ORGS + "/{organizationName}")
+    Object getOrganization(@Param("organizationName") String organizationName);
 
-    @Headers({"Content-Type: text/plain", "Accept: text/plain"})
+
+    @Headers({"Content-Type: application/json", "Accept: application/json"})
     @RequestLine("GET " + ORGS + "/{organizationName}" + MEMBERS)
-    String getOrganizationMembers(@Param("organizationName") String organizationName);
+    Object getOrganizationMembers(@Param("organizationName") String organizationName);
 
 }

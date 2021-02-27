@@ -41,9 +41,18 @@ public class MetricsResource {
     /**
      * Only returns data for Netflix repositories.
      */
-    @GetMapping(path = ResourcePaths.ORGS + "/Netflix" + ResourcePaths.MEMBERS, produces = MediaType.TEXT_PLAIN_VALUE)
-    public String organization() {
+    @GetMapping(path = ResourcePaths.ORGS + "/Netflix")
+    public Object organization() {
+        return metricsService.getOrganization();
+    }
+
+    /**
+     * Only returns data for Netflix repositories.
+     */
+    @GetMapping(path = ResourcePaths.ORGS + "/Netflix" + ResourcePaths.MEMBERS)
+    public Object members() {
         return metricsService.getMembers();
     }
+
 
 }
