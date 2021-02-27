@@ -85,4 +85,16 @@ To run all the tests, run the following command:
 ./gradlew check
 ```
 
+Alternatively, to run the provided curl/jq specs, execute one of the following commands while running the application locally.
+
+```
+sh ./api-suite.sh <port_number>
+sh ./api-suite-fixed.sh <port_number> 
+```
+
+Note that these specs use static values that change over time and thus have unreliable results. The "fixed" results has metrics recorded
+at the time of its creation.
+
+
+
 
