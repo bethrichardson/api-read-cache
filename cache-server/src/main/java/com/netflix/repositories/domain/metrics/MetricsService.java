@@ -1,6 +1,7 @@
 package com.netflix.repositories.domain.metrics;
 
 import com.netflix.repositories.common.MetricTuple;
+import com.netflix.repositories.domain.metrics.members.MembersMetricCache;
 import com.netflix.repositories.domain.metrics.repositories.RepositoryMetricCache;
 import com.spotify.github.v3.repos.Repository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,14 +13,21 @@ import java.util.List;
 public class MetricsService {
 
     @Autowired
-    private RepositoryMetricCache cache;
+    private RepositoryMetricCache repositoryCache;
+
+    @Autowired
+    private MembersMetricCache membersCache;
 
     public List<MetricTuple> getForkMetrics(int numRepos) {
-        return cache.getView(ViewType.FORKS, numRepos);
+        return repositoryCache.getView(ViewType.FORKS, numRepos);
     }
 
     public List<Repository> getRepositories() {
-        return cache.getMetric().getValue();
+        return repositoryCache.getMetric().getValue();
+    }
+
+    public String getMembers() {
+        return membersCache.getMetric().getValue().toString(); // TODO: manage JSON so it can be pretty
     }
 
 

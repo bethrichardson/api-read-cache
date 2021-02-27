@@ -1,50 +1,45 @@
 package com.netflix.repositories.domain.metrics.repositories;
 
+import com.netflix.repositories.client.ResourcePaths;
+import com.netflix.repositories.domain.metrics.github.GithubConfig;
+import com.netflix.repositories.domain.metrics.github.GithubCredentials;
 import com.netflix.repositories.domain.metrics.ViewType;
 import com.spotify.github.v3.clients.GitHubClient;
 import com.spotify.github.v3.clients.RepositoryClient;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 
 import java.net.URI;
 
 @Configuration
+@Import({
+        GithubConfig.class
+})
 public class RepositoryMetricsConfig {
 
-    @Value("${GITHUB_API_TOKEN}")
-    private transient String apiToken;
-
-    @Value("${github.organization:Netflix}")
-    private transient String githubOrganization;
-
-
     @Bean
-    GitHubClient gitHubClient() {
-        return GitHubClient.create(URI.create("https://api.github.com"), apiToken);
+    GitHubClient spotifyGithubClient(GithubCredentials credentials) {
+        return GitHubClient.create(URI.create(ResourcePaths.GIT_HUB_API), credentials.getApiToken());
     }
 
     @Bean
-    RepositoryClient repositoryClient() {
-        return gitHubClient().createRepositoryClient(githubOrganization, null);
+    RepositoryClient repositoryClient(GitHubClient gitHubClient, GithubCredentials credentials) {
+        return gitHubClient.createRepositoryClient(credentials.getOrganization(), null);
     }
 
     @Bean
-    RepositoryMetricCollector githubService(RepositoryClient repositoryClient) {
+    RepositoryMetricCollector repositoryMetricCollector(RepositoryClient repositoryClient) {
         return new RepositoryMetricCollector(repositoryClient);
     }
 
-    @Autowired
-    RepositoryMetricCollector repositoryMetricsCollector;
-
     @Bean
-    public RepositoryMetricCache metricsCache() {
+    public RepositoryMetricCache repositoryMetricCache(RepositoryMetricCollector repositoryMetricsCollector) {
         RepositoryMetricCache cache = new RepositoryMetricCache(repositoryMetricsCollector);
         cache.initializeCache(supportedViews());
         return cache;
     }
-    
+
     protected ViewType[] supportedViews() {
         return ViewType.values();
     }

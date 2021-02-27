@@ -31,12 +31,19 @@ public class MetricsResource {
     }
 
     /**
-     * Only returns data for Netflix repositories. Otherwise, all other organizations
-     * will be routed to github API
+     * Only returns data for Netflix repositories.
      */
     @GetMapping(path = ResourcePaths.ORGS + "/Netflix" + ResourcePaths.REPOS, produces = MediaType.TEXT_PLAIN_VALUE)
     public String repositories() {
         return metricsService.getRepositories().toString();
+    }
+
+    /**
+     * Only returns data for Netflix repositories.
+     */
+    @GetMapping(path = ResourcePaths.ORGS + "/Netflix" + ResourcePaths.MEMBERS, produces = MediaType.TEXT_PLAIN_VALUE)
+    public String organization() {
+        return metricsService.getMembers();
     }
 
 }
