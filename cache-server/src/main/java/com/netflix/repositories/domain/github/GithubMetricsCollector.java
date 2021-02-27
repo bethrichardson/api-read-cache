@@ -1,7 +1,5 @@
 package com.netflix.repositories.domain.github;
 
-import com.netflix.repositories.common.RepositoryMetric;
-import com.netflix.repositories.domain.metrics.Metrics;
 import com.netflix.repositories.domain.metrics.MetricsCollector;
 import com.spotify.github.v3.clients.RepositoryClient;
 import com.spotify.github.v3.repos.Repository;
@@ -22,18 +20,17 @@ public class GithubMetricsCollector implements MetricsCollector {
     }
 
     @Override
-    public List<RepositoryMetric> getForkMetrics() {
+    public List<Repository> getRepositories() {
         try {
-            log.info("Retrieving fork metrics from GitHub.");
+            log.info("Retrieving repository data from GitHub.");
             CompletableFuture<List<Repository>> repoFuture = client.listOrganizationRepositories();
             if (repoFuture != null) {
-                List<Repository> repositories = repoFuture.get();
-                return Metrics.ofForks(repositories);
+                return repoFuture.get();
             } else {
                 return Collections.emptyList();
             }
         } catch (InterruptedException | ExecutionException e) {
-            log.warn("Failed to retrieve repository metrics.", e);
+            log.warn("Failed to retrieve repositories.", e);
             return Collections.emptyList();
         }
     }

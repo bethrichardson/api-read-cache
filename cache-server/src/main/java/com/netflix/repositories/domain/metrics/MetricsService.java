@@ -14,11 +14,11 @@ public class MetricsService {
     private MetricsCache cache;
 
     public List<RepositoryMetric> getForkMetrics(int numRepos) {
-        List<RepositoryMetric> metrics = cache.getMetric(MetricType.FORKS);
-        if (metrics.size() > numRepos) {
-            return metrics.subList(0, numRepos);
-        }
-        return metrics;
+        return cache.getView(ViewType.FORKS, numRepos);
+    }
+
+    public Object getRepositories() {
+        return cache.getMetric(MetricType.REPOSITORIES);
     }
 
 

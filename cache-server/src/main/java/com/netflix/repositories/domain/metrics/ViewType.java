@@ -1,7 +1,7 @@
 package com.netflix.repositories.domain.metrics;
 
-public enum MetricType {
+public enum ViewType {
 
-    REPOSITORIES
+    FORKS
 
 }
