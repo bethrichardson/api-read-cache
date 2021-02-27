@@ -16,6 +16,7 @@ trait MetricsTestingSupport {
                     .forksCount(it)
                     .updatedAt(GitHubInstant.create(Instant.now()))
                     .openIssuesCount(it)
+                    .stargazersCount(it)
                     .build())
         }
         expectedList
