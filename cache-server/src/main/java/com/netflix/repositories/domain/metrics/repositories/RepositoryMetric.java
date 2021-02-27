@@ -24,6 +24,7 @@ public class RepositoryMetric implements Metric<List<Repository>> {
         addView(views, ViewType.FORKS, RepositoryMetric::getForkMetrics);
         addView(views, ViewType.LAST_UPDATED, RepositoryMetric::getLastUpdatedMetrics);
         addView(views, ViewType.OPEN_ISSUES, RepositoryMetric::getOpenIssueMetrics);
+        addView(views, ViewType.STARS, RepositoryMetric::getStarMetrics);
         return views;
     }
 
@@ -82,6 +83,23 @@ public class RepositoryMetric implements Metric<List<Repository>> {
             return MetricTuple.builder()
                     .name(repository.name())
                     .count(Long.valueOf(repository.openIssuesCount()))
+                    .build();
+        }
+        return MetricTuple.emptyResult();
+    }
+
+    public static List<MetricTuple> getStarMetrics(List<Repository> repositories) {
+        return repositories.stream()
+                .map(RepositoryMetric::getOpenIssueMetrics)
+                .sorted(Comparator.reverseOrder())
+                .collect(Collectors.toList());
+    }
+
+    public static MetricTuple getStarMetrics(Repository repository) {
+        if (repository.stargazersCount() != null) {
+            return MetricTuple.builder()
+                    .name(repository.name())
+                    .count(Long.valueOf(repository.stargazersCount()))
                     .build();
         }
         return MetricTuple.emptyResult();

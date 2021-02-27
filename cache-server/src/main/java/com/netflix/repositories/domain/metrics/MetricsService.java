@@ -58,16 +58,20 @@ public class MetricsService {
         return githubObjectMapper.writeValueAsString(getRepositories());
     }
 
-    public List<MetricTuple> getMetricsByForkCount(int numRepos) {
+    public List<MetricTuple> getTopMetricsByForkCount(int numRepos) {
         return repositoryCache.getView(ViewType.FORKS, numRepos);
     }
 
-    public List<MetricTuple> getMetricsByLastUpdated(int numRepos) {
+    public List<MetricTuple> getTopMetricsByLastUpdated(int numRepos) {
         return repositoryCache.getView(ViewType.LAST_UPDATED, numRepos);
     }
 
     public List<MetricTuple> getMetricsByOpenIssues(int numRepos) {
         return repositoryCache.getView(ViewType.OPEN_ISSUES, numRepos);
+    }
+
+    public List<MetricTuple> getTopMetricsByStars(int numRepos) {
+        return repositoryCache.getView(ViewType.STARS, numRepos);
     }
 
     /**

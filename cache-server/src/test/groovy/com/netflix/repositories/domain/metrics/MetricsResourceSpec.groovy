@@ -147,7 +147,7 @@ class MetricsResourceSpec extends Specification implements MetricsTestingSupport
         1 * spotifyGitHubClient.listOrganizationRepositories() >> CompletableFuture.completedFuture(expectedList)
 
         when:
-        List<List<Object>> actualList = metricsCachingClient.getTopRepositoriesByForks(numberRepos)
+        List<List<Object>> actualList = metricsCachingClient.getTopRepositoriesByForkCount(numberRepos)
 
         then:
         assert actualList.size() == numberRepos
@@ -164,7 +164,7 @@ class MetricsResourceSpec extends Specification implements MetricsTestingSupport
         1 * spotifyGitHubClient.listOrganizationRepositories() >> { throw new InterruptedException() }
 
         when:
-        List<List<Object>> actualList = metricsCachingClient.getTopRepositoriesByForks(numberRepos)
+        List<List<Object>> actualList = metricsCachingClient.getTopRepositoriesByForkCount(numberRepos)
 
         then:
         assert actualList.isEmpty()
@@ -182,7 +182,7 @@ class MetricsResourceSpec extends Specification implements MetricsTestingSupport
         1 * spotifyGitHubClient.listOrganizationRepositories() >> CompletableFuture.completedFuture(expectedList)
 
         when:
-        List<List<Object>> actualList = metricsCachingClient.getTopRepositoriesByForks(numberRepos)
+        List<List<Object>> actualList = metricsCachingClient.getTopRepositoriesByForkCount(numberRepos)
 
         then:
         assert actualList.size() == 3
@@ -219,6 +219,24 @@ class MetricsResourceSpec extends Specification implements MetricsTestingSupport
 
         when:
         List<List<Object>> actualList = metricsCachingClient.getTopRepositoriesByOpenIssueCount(numberRepos)
+
+        then:
+        assert actualList.size() == numberRepos
+    }
+
+    def "should return a list of top N repositories by number of stars"() {
+        given:
+        int numberRepos = 5
+        List<Repository> expectedList = buildRepositoryList(10)
+
+        when:
+        metricsService.refreshAllData()
+
+        then:
+        1 * spotifyGitHubClient.listOrganizationRepositories() >> CompletableFuture.completedFuture(expectedList)
+
+        when:
+        List<List<Object>> actualList = metricsCachingClient.getTopRepositoriesByStarCount(numberRepos)
 
         then:
         assert actualList.size() == numberRepos

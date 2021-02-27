@@ -10,5 +10,6 @@ public interface ResourcePaths {
     String FORKS = "/forks";
     String LAST_UPDATED = "/last_updated";
     String OPEN_ISSUES = "/open_issues";
+    String STARS = "/stars";
 
 }

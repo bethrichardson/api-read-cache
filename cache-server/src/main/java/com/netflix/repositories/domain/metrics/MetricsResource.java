@@ -55,7 +55,7 @@ public class MetricsResource {
 
     @GetMapping(ResourcePaths.VIEW + "/{numRepositories}" + ResourcePaths.FORKS)
     public List<List<Object>> forks(@PathVariable("numRepositories") Integer numRepositories) {
-        return metricsService.getMetricsByForkCount(numRepositories)
+        return metricsService.getTopMetricsByForkCount(numRepositories)
                 .stream()
                 .map(MetricTuple::getAsTuple)
                 .collect(Collectors.toList());
@@ -63,7 +63,7 @@ public class MetricsResource {
 
     @GetMapping(ResourcePaths.VIEW + "/{numRepositories}" + ResourcePaths.LAST_UPDATED)
     public List<List<Object>> lastUpdated(@PathVariable("numRepositories") Integer numRepositories) {
-        return metricsService.getMetricsByLastUpdated(numRepositories)
+        return metricsService.getTopMetricsByLastUpdated(numRepositories)
                 .stream()
                 .map(MetricTuple::getAsTuple)
                 .collect(Collectors.toList());
@@ -72,6 +72,14 @@ public class MetricsResource {
     @GetMapping(ResourcePaths.VIEW + "/{numRepositories}" + ResourcePaths.OPEN_ISSUES)
     public List<List<Object>> openIssues(@PathVariable("numRepositories") Integer numRepositories) {
         return metricsService.getMetricsByOpenIssues(numRepositories)
+                .stream()
+                .map(MetricTuple::getAsTuple)
+                .collect(Collectors.toList());
+    }
+
+    @GetMapping(ResourcePaths.VIEW + "/{numRepositories}" + ResourcePaths.STARS)
+    public List<List<Object>> stars(@PathVariable("numRepositories") Integer numRepositories) {
+        return metricsService.getTopMetricsByForkCount(numRepositories)
                 .stream()
                 .map(MetricTuple::getAsTuple)
                 .collect(Collectors.toList());
