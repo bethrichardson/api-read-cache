@@ -15,28 +15,25 @@ import static com.netflix.repositories.client.ResourcePaths.*;
 })
 public interface MetricsCachingClient {
 
-    @Headers({"Content-Type: application/json", "Accept: application/json"})
     @RequestLine("GET ")
     Object getOverview();
 
-    @Headers({"Content-Type: application/json", "Accept: application/json"})
+    @RequestLine("GET " + "{path}")
+    Object getApiEndpoint(@Param("path") String path);
+
     @RequestLine("GET " + ORGS + "/{organizationName}")
     Object getOrganization(@Param("organizationName") String organizationName);
 
-    @Headers({"Content-Type: application/json", "Accept: application/json"})
     @RequestLine("GET " + ORGS + "/{organizationName}" + MEMBERS)
     Object getOrganizationMembers(@Param("organizationName") String organizationName);
 
-    @Headers({"Content-Type: text/plain", "Accept: text/plain"})
     @RequestLine("GET " + ORGS + "/{organizationName}" + REPOS)
-    String getOrganizationRepos(@Param("organizationName") String organizationName);
+    Object getOrganizationRepos(@Param("organizationName") String organizationName);
 
     @RequestLine("GET " + VIEW + "/{numResults}" + FORKS)
     List<List<Object>> getTopRepositoriesByForks(@Param("numResults") Integer numResults);
 
-    @Headers({"Content-Type: application/json", "Accept: application/json"})
-    @RequestLine("GET " + "{path}")
-    Object getApiEndpoint(@Param("path") String path);
-
+    @RequestLine("GET " + VIEW + "/{numResults}" + LAST_UPDATED)
+    List<List<Object>> getTopRepositoriesByLastUpdated(@Param("numResults") Integer numResults);
 
 }

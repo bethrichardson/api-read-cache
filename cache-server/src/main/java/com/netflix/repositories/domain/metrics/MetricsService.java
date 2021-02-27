@@ -1,10 +1,12 @@
 package com.netflix.repositories.domain.metrics;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.netflix.repositories.common.MetricTuple;
 import com.netflix.repositories.domain.metrics.github.CachingGitHubClient;
 import com.netflix.repositories.domain.metrics.proxied.ProxiedMetricCache;
 import com.netflix.repositories.domain.metrics.repositories.RepositoryMetricCache;
 import com.spotify.github.v3.repos.Repository;
+import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -28,6 +30,9 @@ public class MetricsService {
     @Autowired
     private RepositoryMetricCache repositoryCache;
 
+    @Autowired
+    private ObjectMapper githubObjectMapper;
+
     public Object getOverview() {
         return overviewMetricCache.getMetric().getValue();
     }
@@ -48,8 +53,17 @@ public class MetricsService {
         return repositoryCache.getMetric().getValue();
     }
 
-    public List<MetricTuple> getForkMetrics(int numRepos) {
+    @SneakyThrows
+    public String getRepositoriesAsJsonString() {
+        return githubObjectMapper.writeValueAsString(getRepositories());
+    }
+
+    public List<MetricTuple> getMetricsByForkCount(int numRepos) {
         return repositoryCache.getView(ViewType.FORKS, numRepos);
+    }
+
+    public List<MetricTuple> getMetricsByLastUpdated(int numRepos) {
+        return repositoryCache.getView(ViewType.LAST_UPDATED, numRepos);
     }
 
     /**

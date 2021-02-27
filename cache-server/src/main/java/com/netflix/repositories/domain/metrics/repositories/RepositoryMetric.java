@@ -10,6 +10,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @AllArgsConstructor
@@ -20,9 +21,13 @@ public class RepositoryMetric implements Metric<List<Repository>> {
     @Override
     public Map<ViewType, List<MetricTuple>> getViews() {
         Map<ViewType, List<MetricTuple>> views = new HashMap<>();
-        List<MetricTuple> forkMetrics = ofForks(value);
-        views.put(ViewType.FORKS, forkMetrics);
+        addView(views, ViewType.FORKS, RepositoryMetric::getForkMetrics);
+        addView(views, ViewType.LAST_UPDATED, RepositoryMetric::getLastUpdatedMetrics);
         return views;
+    }
+
+    private void addView(Map<ViewType, List<MetricTuple>> views, ViewType type, Function<List<Repository>, List<MetricTuple>> metricAggregationFunction) {
+        views.put(type, metricAggregationFunction.apply(value));
     }
 
     @Override
@@ -30,16 +35,36 @@ public class RepositoryMetric implements Metric<List<Repository>> {
         return value;
     }
 
-    public static MetricTuple ofForks(Repository repository) {
-        return MetricTuple.builder()
-                .name(repository.name())
-                .count(repository.forksCount())
-                .build();
+    public static MetricTuple getForkMetrics(Repository repository) {
+        if (repository.forksCount() != null) {
+            return MetricTuple.builder()
+                    .name(repository.name())
+                    .count(Long.valueOf(repository.forksCount()))
+                    .build();
+        }
+        return MetricTuple.emptyResult();
     }
 
-    public static List<MetricTuple> ofForks(List<Repository> repositories) {
+    public static List<MetricTuple> getForkMetrics(List<Repository> repositories) {
         return repositories.stream()
-                .map(RepositoryMetric::ofForks)
+                .map(RepositoryMetric::getForkMetrics)
+                .sorted(Comparator.reverseOrder())
+                .collect(Collectors.toList());
+    }
+
+    public static MetricTuple getLastUpdatedMetrics(Repository repository) {
+        if (repository.updatedAt() != null && repository.updatedAt().instant() != null) {
+            return MetricTuple.builder()
+                    .name(repository.name())
+                    .count(repository.updatedAt().instant().getEpochSecond())
+                    .build();
+        }
+        return MetricTuple.emptyResult();
+    }
+
+    public static List<MetricTuple> getLastUpdatedMetrics(List<Repository> repositories) {
+        return repositories.stream()
+                .map(RepositoryMetric::getLastUpdatedMetrics)
                 .sorted(Comparator.reverseOrder())
                 .collect(Collectors.toList());
     }

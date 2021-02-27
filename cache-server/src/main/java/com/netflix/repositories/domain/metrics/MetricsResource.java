@@ -2,9 +2,9 @@ package com.netflix.repositories.domain.metrics;
 
 import com.netflix.repositories.client.ResourcePaths;
 import com.netflix.repositories.common.MetricTuple;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -39,9 +39,10 @@ public class MetricsResource {
     /**
      * Only returns data for Netflix repositories.
      */
-    @GetMapping(path = ResourcePaths.ORGS + "/Netflix" + ResourcePaths.REPOS, produces = MediaType.TEXT_PLAIN_VALUE)
-    public String repositories() {
-        return metricsService.getRepositories().toString();
+    @SneakyThrows
+    @GetMapping(path = ResourcePaths.ORGS + "/Netflix" + ResourcePaths.REPOS)
+    public Object repositories() {
+        return metricsService.getRepositoriesAsJsonString();
     }
 
     /**
@@ -54,7 +55,15 @@ public class MetricsResource {
 
     @GetMapping(ResourcePaths.VIEW + "/{numRepositories}" + ResourcePaths.FORKS)
     public List<List<Object>> forks(@PathVariable("numRepositories") Integer numRepositories) {
-        return metricsService.getForkMetrics(numRepositories)
+        return metricsService.getMetricsByForkCount(numRepositories)
+                .stream()
+                .map(MetricTuple::getAsTuple)
+                .collect(Collectors.toList());
+    }
+
+    @GetMapping(ResourcePaths.VIEW + "/{numRepositories}" + ResourcePaths.LAST_UPDATED)
+    public List<List<Object>> lastUpdated(@PathVariable("numRepositories") Integer numRepositories) {
+        return metricsService.getMetricsByLastUpdated(numRepositories)
                 .stream()
                 .map(MetricTuple::getAsTuple)
                 .collect(Collectors.toList());
@@ -63,7 +72,6 @@ public class MetricsResource {
     @RequestMapping(value="**",method = RequestMethod.GET)
     public Object proxyOtherRequests(final HttpServletRequest request){
         String path = request.getRequestURI();
-        log.info("Proxying unhandled route url=" + path);
         return metricsService.getProxiedResponse(path);
     }
 

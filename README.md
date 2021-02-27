@@ -60,12 +60,12 @@ To run all the tests, run the following command:
 The service collects metrics every 5 minutes from the GitHub API
 and provides cached metrics at the following URLs:
 
-| Endpoint             | Description                                   |
-| -------------------- | --------------------------------------------- |
-|/                     | Root node data for the github API             |
-|/orgs/Netflix         | Overview of data for the Netflix organization |
-|/orgs/Netflix/repos   | List of repositories for Netflix organization |
-|/orgs/Netflix/members | List of members for Netflix organization      |
+| Endpoint               | Description                                   |
+| ---------------------- | --------------------------------------------- |
+|`/`                     | Root node data for the github API             |
+|`/orgs/Netflix`         | Overview of data for the Netflix organization |
+|`/orgs/Netflix/repos`   | List of repositories for Netflix organization |
+|`/orgs/Netflix/members` | List of members for Netflix organization      |
 
 The service proxies all other paths directly to the GitHub API without caching
 values.
@@ -74,9 +74,10 @@ values.
 The service provides a set of views for the latest repository metrics 
 that can be accessed at the following URLs:
 
-| Endpoint         | Description                   |
-| ---------------- | ----------------------------- |
-|/view/top/N/forks | Top-N repos by number of forks|
+| Endpoint                  | Description                                    |
+| ------------------------- | ---------------------------------------------- |
+|`/view/top/N/forks`        | Top-N repos by number of forks                 |
+|`/view/top/N/last_updated` | Top-N repos by updated time (most recent first)|
 
 ### Healthcheck
 The application will respond on `/healthcheck` with a 200 status when it is ready to receive requests.
