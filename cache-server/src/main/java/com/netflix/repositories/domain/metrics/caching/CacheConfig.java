@@ -11,18 +11,14 @@ import org.springframework.context.annotation.Import;
 @Import({
         GithubConfig.class
 })
-public class CachingConfig {
+public class CacheConfig {
 
     @Autowired
     GithubMetricsCollector githubMetricsCollector;
 
-    public TimeProvider timeProvider() {
-        return new TimeProvider();
-    }
-
     @Bean
     public MetricsCache metricsCache() {
-        MetricsCache cache = new MetricsCache(githubMetricsCollector, timeProvider());
+        MetricsCache cache = new MetricsCache(githubMetricsCollector);
         cache.initializeCache();
         return cache;
     }

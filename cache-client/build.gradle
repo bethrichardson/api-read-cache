@@ -6,6 +6,7 @@ sourceCompatibility = JavaVersion.VERSION_1_8
 
 dependencies {
     implementation 'org.slf4j:slf4j-api:1.6.3'
+    implementation "com.google.guava:guava:28.1-jre"
     implementation "io.github.openfeign:feign-core:${feignVersion}"
     implementation "io.github.openfeign:feign-jackson:${feignVersion}"
     implementation "io.github.openfeign:feign-httpclient:${feignVersion}"

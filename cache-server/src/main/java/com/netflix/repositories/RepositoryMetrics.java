@@ -2,7 +2,7 @@ package com.netflix.repositories;
 
 import com.netflix.repositories.config.RepositoryMetricsConfig;
 import com.netflix.repositories.domain.github.GithubConfig;
-import com.netflix.repositories.domain.metrics.caching.CachingConfig;
+import com.netflix.repositories.domain.metrics.caching.CacheConfig;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.actuate.autoconfigure.health.HealthEndpointAutoConfiguration;
 import org.springframework.boot.actuate.autoconfigure.metrics.web.servlet.WebMvcMetricsAutoConfiguration;
@@ -22,7 +22,7 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 @ComponentScan("com.netflix.repositories.domain")
 @Import({
         RepositoryMetricsConfig.class,
-        CachingConfig.class,
+        CacheConfig.class,
         HealthEndpointAutoConfiguration.class,
         HttpMessageConvertersAutoConfiguration.class,
         HttpEncodingAutoConfiguration.class,

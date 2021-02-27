@@ -1,14 +1,12 @@
 package com.netflix.repositories.client;
 
-import com.netflix.repositories.common.RepositoryMetric;
 import feign.Headers;
 import feign.Param;
 import feign.RequestLine;
 
 import java.util.List;
 
-import static com.netflix.repositories.client.ResourcePaths.FORKS;
-import static com.netflix.repositories.client.ResourcePaths.VIEW;
+import static com.netflix.repositories.client.ResourcePaths.*;
 
 
 @Headers({
@@ -18,6 +16,10 @@ import static com.netflix.repositories.client.ResourcePaths.VIEW;
 public interface RepositoryMetricsClient {
 
     @RequestLine("GET " + VIEW + "/{numResults}" + FORKS)
-    List<RepositoryMetric> getTopRepositoriesByForks(@Param("numResults") Integer numResults);
+    List<List<Object>> getTopRepositoriesByForks(@Param("numResults") Integer numResults);
+
+    @Headers({"Content-Type: text/plain", "Accept: text/plain"})
+    @RequestLine("GET " + ORGS + "/{organizationName}" + REPOS)
+    String getOrganizationRepos(@Param("organizationName") String organizationName);
 
 }

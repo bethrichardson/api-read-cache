@@ -1,9 +1,7 @@
 package com.netflix.repositories.config;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.netflix.repositories.client.RepositoryMetricsClient;
 import feign.Feign;
-import feign.jackson.JacksonDecoder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -18,7 +16,7 @@ public class RepositoryMetricsConfig {
     @Bean
     public RepositoryMetricsClient repositoryMetricsClient() {
         return Feign.builder()
-                .decoder(new JacksonDecoder(new ObjectMapper()))
+                .decoder(new JsonOrTextDecoder())
                 .target(RepositoryMetricsClient.class, "http://localhost:10000"); // TODO: configurable ports
     }
 

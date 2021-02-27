@@ -10,10 +10,10 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class CacheRefresher implements Runnable {
 
-    private MetricsCache cache;
+    private ReloadingCache cache;
     private ScheduledFuture<?> runningHandler;
 
-    public CacheRefresher(MetricsCache cache) {
+    public CacheRefresher(ReloadingCache cache) {
         this.cache = cache;
     }
 
