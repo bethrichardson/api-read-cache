@@ -3,7 +3,7 @@ github API.
 
 ## Building
 
-This project is built using gradle 6. It was built using
+This project is built using gradle 6. It was originally built using
 the [Netflix/gradle-template](https://github.com/Netflix/gradle-template) project.
 
 To execute a build, run the following command:
@@ -42,7 +42,7 @@ or by setting them using the usage format in the following table in the
 | Option           | Description                   | Usage              |
 | ---------------- | -------------------------------------------------- | -------------------
 |port              | Configure the port used by the running application. Default is 8080| `server.port=<port_number>` |
-|organization (_Optional_)| Configure the root organization used for all metrics from GitHub. Default is Netflix| `github.organization=<org_name>` |
+|organization (_Optional_)| Configure the root organization used for all metricTuples from GitHub. Default is Netflix| `github.organization=<org_name>` |
 
 
 ## Testing
@@ -55,6 +55,18 @@ To run all the tests, run the following command:
 ```
 
 ## API Reference
+
+### Caching APIs
+The service collects metrics every 5 minutes from the GitHub API
+and provides cached metrics at the following URLs:
+
+| Endpoint           | Description                                   |
+| ------------------ | --------------------------------------------- |
+|/orgs/Netflix/repos | List of repositories for Netflix organization |
+
+### Metric View Endpoints
+The service provides a set of views for the latest repository metrics 
+that can be accessed at the following URLs:
 
 | Endpoint         | Description                   |
 | ---------------- | ----------------------------- |

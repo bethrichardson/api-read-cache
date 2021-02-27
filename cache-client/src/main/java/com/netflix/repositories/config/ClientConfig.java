@@ -2,16 +2,11 @@ package com.netflix.repositories.config;
 
 import com.netflix.repositories.client.RepositoryMetricsClient;
 import feign.Feign;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class RepositoryMetricsConfig {
-
-    @Autowired
-    ApplicationContext context;
+public class ClientConfig {
 
     @Bean
     public RepositoryMetricsClient repositoryMetricsClient() {

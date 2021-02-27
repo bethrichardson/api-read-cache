@@ -12,13 +12,13 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class RepositoryMetric implements Comparable<RepositoryMetric> {
+public class MetricTuple implements Comparable<MetricTuple> {
 
     private String name;
     private Integer count;
 
     @Override
-    public int compareTo(RepositoryMetric o) {
+    public int compareTo(MetricTuple o) {
         return count - o.count; // TODO: handle nulls
     }
 
@@ -28,4 +28,5 @@ public class RepositoryMetric implements Comparable<RepositoryMetric> {
         tuple.add(count);
         return tuple;
     }
+
 }

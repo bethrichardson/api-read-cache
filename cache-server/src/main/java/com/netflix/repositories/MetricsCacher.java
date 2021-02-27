@@ -1,8 +1,6 @@
 package com.netflix.repositories;
 
-import com.netflix.repositories.config.RepositoryMetricsConfig;
-import com.netflix.repositories.domain.github.GithubConfig;
-import com.netflix.repositories.domain.metrics.caching.CacheConfig;
+import com.netflix.repositories.domain.metrics.repositories.RepositoryMetricsConfig;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.actuate.autoconfigure.health.HealthEndpointAutoConfiguration;
 import org.springframework.boot.actuate.autoconfigure.metrics.web.servlet.WebMvcMetricsAutoConfiguration;
@@ -21,22 +19,20 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 @Configuration
 @ComponentScan("com.netflix.repositories.domain")
 @Import({
-        RepositoryMetricsConfig.class,
-        CacheConfig.class,
         HealthEndpointAutoConfiguration.class,
         HttpMessageConvertersAutoConfiguration.class,
         HttpEncodingAutoConfiguration.class,
         WebMvcMetricsAutoConfiguration.class,
         ServletWebServerFactoryAutoConfiguration.class,
-        GithubConfig.class
+        RepositoryMetricsConfig.class
 })
 @EnableWebMvc
 @EnableAutoConfiguration
 @EnableConfigurationProperties(WebMvcProperties.class)
-public class RepositoryMetrics {
+public class MetricsCacher {
 
     public static void main(String[] args) {
-        SpringApplication.run(RepositoryMetrics.class, args);
+        SpringApplication.run(MetricsCacher.class, args);
     }
 
 }

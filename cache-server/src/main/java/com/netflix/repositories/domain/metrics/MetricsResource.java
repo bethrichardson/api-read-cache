@@ -1,7 +1,7 @@
 package com.netflix.repositories.domain.metrics;
 
 import com.netflix.repositories.client.ResourcePaths;
-import com.netflix.repositories.common.RepositoryMetric;
+import com.netflix.repositories.common.MetricTuple;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,7 +26,7 @@ public class MetricsResource {
     public List<List<Object>> forks(@PathVariable("numRepositories") Integer numRepositories) {
         return metricsService.getForkMetrics(numRepositories)
                 .stream()
-                .map(RepositoryMetric::getAsTuple)
+                .map(MetricTuple::getAsTuple)
                 .collect(Collectors.toList());
     }
 

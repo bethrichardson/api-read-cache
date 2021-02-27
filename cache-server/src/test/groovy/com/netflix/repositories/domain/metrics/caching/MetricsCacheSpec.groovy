@@ -1,10 +1,11 @@
 package com.netflix.repositories.domain.metrics.caching
 
 import com.netflix.repositories.ComponentTest
-import com.netflix.repositories.common.RepositoryMetric
-import com.netflix.repositories.domain.metrics.ViewType
-import com.netflix.repositories.domain.metrics.MetricsCollector
+import com.netflix.repositories.common.MetricTuple
+import com.netflix.repositories.domain.metrics.MetricCollector
 import com.netflix.repositories.domain.metrics.MetricsTestingSupport
+import com.netflix.repositories.domain.metrics.ViewType
+import com.netflix.repositories.domain.metrics.repositories.RepositoryMetric
 import com.spotify.github.v3.repos.Repository
 import spock.lang.Specification
 import spock.util.concurrent.PollingConditions
@@ -14,14 +15,14 @@ import java.time.Duration
 @ComponentTest
 class MetricsCacheSpec extends Specification implements MetricsTestingSupport {
 
-    StubMetricsCollector metricsCollector
+    StubMetricTupleCollector metricsCollector
     MetricsCache cache
     List<Repository> expectedList = []
     int numberRepos = 5
 
     def setup() {
         expectedList = buildRepositoryList(numberRepos)
-        metricsCollector = new StubMetricsCollector(expectedList)
+        metricsCollector = new StubMetricTupleCollector(expectedList)
         cache = new MetricsCache(metricsCollector)
     }
 
@@ -33,7 +34,7 @@ class MetricsCacheSpec extends Specification implements MetricsTestingSupport {
         metricsCollector.interactionCount == 1
 
         and:
-        List<List<Object>> actual = cache.getView(ViewType.FORKS, numberRepos)
+        List<MetricTuple> actual = cache.getView(ViewType.FORKS, numberRepos)
         assert actual.size() == numberRepos
     }
 
@@ -53,19 +54,20 @@ class MetricsCacheSpec extends Specification implements MetricsTestingSupport {
         cache.cacheRefresher.cancel()
     }
 
-    private class StubMetricsCollector implements MetricsCollector {
+    private class StubMetricTupleCollector implements MetricCollector<List<Repository>> {
 
-        List<Repository> list
+        RepositoryMetric value
         int interactionCount = 0;
 
-        StubMetricsCollector(List<RepositoryMetric> list) {
-            this.list = list
+        StubMetricTupleCollector(List<Repository> list) {
+            value = new RepositoryMetric(list)
+            value
         }
 
         @Override
-        List<RepositoryMetric> getRepositories() {
+        RepositoryMetric getMetric() {
             interactionCount++;
-            return list;
+            return value;
         }
     }
 

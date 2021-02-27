@@ -1,6 +1,6 @@
 package com.netflix.repositories;
 
-import com.netflix.repositories.config.RepositoryMetricsConfig;
+import com.netflix.repositories.config.ClientConfig;
 import com.spotify.github.v3.clients.GitHubClient;
 import com.spotify.github.v3.clients.RepositoryClient;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -14,8 +14,8 @@ import spock.mock.DetachedMockFactory;
 @Configuration
 @EnableAutoConfiguration
 @Import({
-        RepositoryMetrics.class,
-        RepositoryMetricsConfig.class
+        MetricsCacher.class,
+        ClientConfig.class
 })
 public class ComponentTestConfig {
 

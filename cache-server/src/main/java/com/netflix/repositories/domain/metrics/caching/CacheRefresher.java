@@ -23,7 +23,7 @@ public class CacheRefresher implements Runnable {
     @Override
     public void run() {
         log.info("Updating all values in metrics cache.");
-        cache.updateAllValues();
+        cache.refreshData();
     }
 
     public void cancel() {
