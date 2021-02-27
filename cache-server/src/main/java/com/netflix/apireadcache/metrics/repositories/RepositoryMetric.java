@@ -41,7 +41,7 @@ public class RepositoryMetric implements Metric<List<Repository>> {
     private static MetricTuple getMetrics(Repository repository, Function<Repository, Long> metricCollectionFunction) {
         if (metricCollectionFunction.apply(repository) != null) {
             return MetricTuple.builder()
-                    .name(repository.name())
+                    .name(repository.fullName())
                     .count(metricCollectionFunction.apply(repository))
                     .build();
         }
