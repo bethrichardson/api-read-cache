@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Data
 @Builder
@@ -29,11 +30,18 @@ public class MetricTuple implements Comparable<MetricTuple> {
         return tuple;
     }
 
+    public static List<List<Object>> getAsTuples(List<MetricTuple> list) {
+        return list.stream().map(MetricTuple::getAsTuple)
+                .collect(Collectors.toList());
+    }
+
     public static MetricTuple emptyResult() {
         return new EmptyResult();
     }
 
     public static class EmptyResult extends MetricTuple {
     }
+
+
 
 }

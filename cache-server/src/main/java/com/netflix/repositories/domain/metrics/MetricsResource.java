@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
@@ -21,7 +20,6 @@ public class MetricsResource {
 
     @Autowired
     private MetricsService metricsService;
-
 
     @GetMapping
     public Object overview() {
@@ -55,34 +53,22 @@ public class MetricsResource {
 
     @GetMapping(ResourcePaths.VIEW + "/{numRepositories}" + ResourcePaths.FORKS)
     public List<List<Object>> forks(@PathVariable("numRepositories") Integer numRepositories) {
-        return metricsService.getTopMetricsByForkCount(numRepositories)
-                .stream()
-                .map(MetricTuple::getAsTuple)
-                .collect(Collectors.toList());
+        return MetricTuple.getAsTuples(metricsService.getTopMetricsByForkCount(numRepositories));
     }
 
     @GetMapping(ResourcePaths.VIEW + "/{numRepositories}" + ResourcePaths.LAST_UPDATED)
     public List<List<Object>> lastUpdated(@PathVariable("numRepositories") Integer numRepositories) {
-        return metricsService.getTopMetricsByLastUpdated(numRepositories)
-                .stream()
-                .map(MetricTuple::getAsTuple)
-                .collect(Collectors.toList());
+        return MetricTuple.getAsTuples(metricsService.getTopMetricsByLastUpdated(numRepositories));
     }
 
     @GetMapping(ResourcePaths.VIEW + "/{numRepositories}" + ResourcePaths.OPEN_ISSUES)
     public List<List<Object>> openIssues(@PathVariable("numRepositories") Integer numRepositories) {
-        return metricsService.getMetricsByOpenIssues(numRepositories)
-                .stream()
-                .map(MetricTuple::getAsTuple)
-                .collect(Collectors.toList());
+        return MetricTuple.getAsTuples(metricsService.getMetricsByOpenIssues(numRepositories));
     }
 
     @GetMapping(ResourcePaths.VIEW + "/{numRepositories}" + ResourcePaths.STARS)
     public List<List<Object>> stars(@PathVariable("numRepositories") Integer numRepositories) {
-        return metricsService.getTopMetricsByForkCount(numRepositories)
-                .stream()
-                .map(MetricTuple::getAsTuple)
-                .collect(Collectors.toList());
+        return MetricTuple.getAsTuples(metricsService.getTopMetricsByForkCount(numRepositories));
     }
 
     @RequestMapping(value="**",method = RequestMethod.GET)
