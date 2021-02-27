@@ -28,7 +28,7 @@ dependencies {
 }
 
 springBoot {
-    mainClassName = 'com.netflix.repositories.RepositoryMetrics'
+    mainClassName = 'com.netflix.repositories.MetricsCacher'
 }
 
 pmd {
