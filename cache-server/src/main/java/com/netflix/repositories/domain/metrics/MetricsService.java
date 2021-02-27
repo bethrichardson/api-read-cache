@@ -2,6 +2,7 @@ package com.netflix.repositories.domain.metrics;
 
 import com.netflix.repositories.common.MetricTuple;
 import com.netflix.repositories.domain.metrics.members.MembersMetricCache;
+import com.netflix.repositories.domain.metrics.organization.OrganizationMetricCache;
 import com.netflix.repositories.domain.metrics.repositories.RepositoryMetricCache;
 import com.spotify.github.v3.repos.Repository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,9 @@ public class MetricsService {
     @Autowired
     private MembersMetricCache membersCache;
 
+    @Autowired
+    private OrganizationMetricCache organizationCache;
+
     public List<MetricTuple> getForkMetrics(int numRepos) {
         return repositoryCache.getView(ViewType.FORKS, numRepos);
     }
@@ -26,10 +30,12 @@ public class MetricsService {
         return repositoryCache.getMetric().getValue();
     }
 
-    public String getMembers() {
-        return membersCache.getMetric().getValue().toString(); // TODO: manage JSON so it can be pretty
+    public Object getMembers() {
+        return membersCache.getMetric().getValue();
     }
 
-
+    public Object getOrganization() {
+        return organizationCache.getMetric().getValue();
+    }
 
 }
