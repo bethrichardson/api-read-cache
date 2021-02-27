@@ -20,7 +20,10 @@ public class MetricTuple implements Comparable<MetricTuple> {
 
     @Override
     public int compareTo(MetricTuple o) {
-        return (int)(count - o.count); // TODO: handle nulls and test that empty results are sorted last
+        if (o instanceof EmptyResult) {
+            return 1;
+        }
+        return (int)(count - o.count);
     }
 
     public List<Object> getAsTuple() {
@@ -35,11 +38,36 @@ public class MetricTuple implements Comparable<MetricTuple> {
                 .collect(Collectors.toList());
     }
 
+    public static MetricTupleBuilder builder() {
+        return new ValueEnsuringBuilder();
+    }
+
+    /**
+     * If count is set to null, create an EmptyResult
+     */
+    private static class ValueEnsuringBuilder extends MetricTupleBuilder {
+        @Override
+        public MetricTuple build() {
+            if (super.count == null) {
+                return emptyResult();
+            }
+            return super.build();
+        }
+    }
+
     public static MetricTuple emptyResult() {
         return new EmptyResult();
     }
 
     public static class EmptyResult extends MetricTuple {
+        @Override
+        public int compareTo(MetricTuple o) {
+            if (o instanceof EmptyResult) {
+                return 0;
+            } else {
+                return -1;
+            }
+        }
     }
 
 
