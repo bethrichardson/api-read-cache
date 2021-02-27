@@ -34,5 +34,9 @@ public interface MetricsCachingClient {
     @RequestLine("GET " + VIEW + "/{numResults}" + FORKS)
     List<List<Object>> getTopRepositoriesByForks(@Param("numResults") Integer numResults);
 
+    @Headers({"Content-Type: application/json", "Accept: application/json"})
+    @RequestLine("GET " + "{path}")
+    Object getApiEndpoint(@Param("path") String path);
+
 
 }
