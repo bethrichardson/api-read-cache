@@ -2,6 +2,8 @@ package com.netflix.repositories.domain.metrics
 
 import com.netflix.repositories.ComponentTest
 import com.netflix.repositories.client.RepositoryMetricsClient
+import com.netflix.repositories.domain.metrics.github.CachingGitHubClient
+import com.netflix.repositories.domain.metrics.members.MembersMetricCache
 import com.netflix.repositories.domain.metrics.repositories.RepositoryMetricCache
 import com.spotify.github.v3.clients.RepositoryClient
 import com.spotify.github.v3.repos.Repository
@@ -17,20 +19,26 @@ class MetricsResourceSpec extends Specification implements MetricsTestingSupport
     RepositoryMetricsClient repositoryMetricsClient
 
     @Autowired
-    RepositoryClient gitHubClient
+    RepositoryClient spotifyGitHubClient
 
     @Autowired
-    RepositoryMetricCache cache
+    CachingGitHubClient cachingGitHubClient
+
+    @Autowired
+    RepositoryMetricCache repositoryCache
+
+    @Autowired
+    MembersMetricCache membersCache
 
     def "should return a flat list of repos when requested"() {
         given:
         List<Repository> expectedList = buildRepositoryList(10)
 
         when:
-        cache.refreshData()
+        repositoryCache.refreshData()
 
         then:
-        1 * gitHubClient.listOrganizationRepositories() >> CompletableFuture.completedFuture(expectedList)
+        1 * spotifyGitHubClient.listOrganizationRepositories() >> CompletableFuture.completedFuture(expectedList)
 
         when:
         String actualList = repositoryMetricsClient.getOrganizationRepos("Netflix")
@@ -39,16 +47,33 @@ class MetricsResourceSpec extends Specification implements MetricsTestingSupport
         assert actualList == expectedList.toString()
     }
 
+    def "should return a flat list of members when requested"() {
+        given:
+        String expectedResult = "I am some proxied data"
+
+        when:
+        membersCache.refreshData()
+
+        then:
+        1 * cachingGitHubClient.getOrganizationMembers("Netflix") >> expectedResult
+
+        when:
+        String actualList = repositoryMetricsClient.getOrganizationMembers("Netflix")
+
+        then:
+        assert actualList == expectedResult
+    }
+
     def "should return a list of top N forks"() {
         given:
         int numberRepos = 5
         List<Repository> expectedList = buildRepositoryList(10)
 
         when:
-        cache.refreshData()
+        repositoryCache.refreshData()
 
         then:
-        1 * gitHubClient.listOrganizationRepositories() >> CompletableFuture.completedFuture(expectedList)
+        1 * spotifyGitHubClient.listOrganizationRepositories() >> CompletableFuture.completedFuture(expectedList)
 
         when:
         List<List<Object>> actualList = repositoryMetricsClient.getTopRepositoriesByForks(numberRepos)
@@ -62,10 +87,10 @@ class MetricsResourceSpec extends Specification implements MetricsTestingSupport
         int numberRepos = 5
 
         when:
-        cache.refreshData()
+        repositoryCache.refreshData()
 
         then:
-        1 * gitHubClient.listOrganizationRepositories() >> { throw new InterruptedException() }
+        1 * spotifyGitHubClient.listOrganizationRepositories() >> { throw new InterruptedException() }
 
         when:
         List<List<Object>> actualList = repositoryMetricsClient.getTopRepositoriesByForks(numberRepos)
@@ -80,10 +105,10 @@ class MetricsResourceSpec extends Specification implements MetricsTestingSupport
         List<Repository> expectedList = buildRepositoryList(3)
 
         when:
-        cache.refreshData()
+        repositoryCache.refreshData()
 
         then:
-        1 * gitHubClient.listOrganizationRepositories() >> CompletableFuture.completedFuture(expectedList)
+        1 * spotifyGitHubClient.listOrganizationRepositories() >> CompletableFuture.completedFuture(expectedList)
 
         when:
         List<List<Object>> actualList = repositoryMetricsClient.getTopRepositoriesByForks(numberRepos)

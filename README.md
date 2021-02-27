@@ -60,9 +60,10 @@ To run all the tests, run the following command:
 The service collects metrics every 5 minutes from the GitHub API
 and provides cached metrics at the following URLs:
 
-| Endpoint           | Description                                   |
-| ------------------ | --------------------------------------------- |
-|/orgs/Netflix/repos | List of repositories for Netflix organization |
+| Endpoint             | Description                                   |
+| -------------------- | --------------------------------------------- |
+|/orgs/Netflix/repos   | List of repositories for Netflix organization |
+|/orgs/Netflix/members | List of members for Netflix organization      |
 
 ### Metric View Endpoints
 The service provides a set of views for the latest repository metrics 

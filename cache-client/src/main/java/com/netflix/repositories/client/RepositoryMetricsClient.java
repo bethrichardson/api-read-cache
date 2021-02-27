@@ -22,4 +22,9 @@ public interface RepositoryMetricsClient {
     @RequestLine("GET " + ORGS + "/{organizationName}" + REPOS)
     String getOrganizationRepos(@Param("organizationName") String organizationName);
 
+
+    @Headers({"Content-Type: text/plain", "Accept: text/plain"})
+    @RequestLine("GET " + ORGS + "/{organizationName}" + MEMBERS)
+    String getOrganizationMembers(@Param("organizationName") String organizationName);
+
 }
