@@ -62,8 +62,13 @@ and provides cached metrics at the following URLs:
 
 | Endpoint             | Description                                   |
 | -------------------- | --------------------------------------------- |
+|/                     | Root node data for the github API             |
+|/orgs/Netflix         | Overview of data for the Netflix organization |
 |/orgs/Netflix/repos   | List of repositories for Netflix organization |
 |/orgs/Netflix/members | List of members for Netflix organization      |
+
+The service proxies all other paths directly to the GitHub API without caching
+values.
 
 ### Metric View Endpoints
 The service provides a set of views for the latest repository metrics 

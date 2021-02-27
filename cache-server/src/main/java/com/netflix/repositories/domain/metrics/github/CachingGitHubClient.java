@@ -25,4 +25,8 @@ public interface CachingGitHubClient {
     @RequestLine("GET " + ORGS + "/{organizationName}" + MEMBERS)
     Object getOrganizationMembers(@Param("organizationName") String organizationName);
 
+    @Headers({"Content-Type: application/json", "Accept: application/json"})
+    @RequestLine("GET " + "{path}")
+    Object getUnhandledRoute(@Param("path") String path);
+
 }

@@ -25,6 +25,25 @@ class MetricsResourceSpec extends Specification implements MetricsTestingSupport
     @Autowired
     MetricsService metricsService
 
+    def "should call through to API when unhandled path requested"() {
+        given:
+        String unhandledPath = "/gists"
+        Object fakeResult = '''
+            {
+              "url": "https://api.github.com/gists/bafa226fdfc58b078276bc741fff82ca"
+            }
+        '''
+
+        when:
+        Object actual = metricsCachingClient.getApiEndpoint(unhandledPath)
+
+        then:
+        1 * cachingGitHubClient.getUnhandledRoute(unhandledPath) >> fakeResult
+
+        then:
+        assert actual.toString().contains("bafa226fdfc58b078276bc741fff82ca")
+    }
+
     def "should return a root node overview when requested"() {
         given:
         Object fakeResult = '''

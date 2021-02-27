@@ -1,6 +1,7 @@
 package com.netflix.repositories.domain.metrics;
 
 import com.netflix.repositories.common.MetricTuple;
+import com.netflix.repositories.domain.metrics.github.CachingGitHubClient;
 import com.netflix.repositories.domain.metrics.proxied.ProxiedMetricCache;
 import com.netflix.repositories.domain.metrics.repositories.RepositoryMetricCache;
 import com.spotify.github.v3.repos.Repository;
@@ -22,6 +23,9 @@ public class MetricsService {
     private ProxiedMetricCache membersMetricCache;
 
     @Autowired
+    CachingGitHubClient gitHubClient;
+
+    @Autowired
     private RepositoryMetricCache repositoryCache;
 
     public Object getOverview() {
@@ -34,6 +38,10 @@ public class MetricsService {
 
     public Object getMembers() {
         return membersMetricCache.getMetric().getValue();
+    }
+
+    public Object getProxiedResponse(String path) {
+        return gitHubClient.getUnhandledRoute(path);
     }
 
     public List<Repository> getRepositories() {
