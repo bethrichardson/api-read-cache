@@ -3,6 +3,7 @@ package com.netflix.apireadcache.client;
 public interface ResourcePaths {
 
     String GIT_HUB_API = "https://api.github.com";
+    String NETFLIX = "/Netflix";
     String ORGS = "/orgs";
     String MEMBERS = "/members";
     String REPOS = "/repos";
