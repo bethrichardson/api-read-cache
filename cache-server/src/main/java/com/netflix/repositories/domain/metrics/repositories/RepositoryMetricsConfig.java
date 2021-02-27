@@ -1,5 +1,8 @@
 package com.netflix.repositories.domain.metrics.repositories;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.PropertyAccessor;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.netflix.repositories.client.ResourcePaths;
 import com.netflix.repositories.domain.metrics.github.GithubConfig;
 import com.netflix.repositories.domain.metrics.github.GithubCredentials;
@@ -42,6 +45,17 @@ public class RepositoryMetricsConfig {
 
     protected ViewType[] supportedViews() {
         return ViewType.values();
+    }
+
+    /**
+     * Visibility set to ANY to allow serializing Repository objects
+     * with com.spotify.github.GitHubInstant
+     */
+    @Bean
+    ObjectMapper githubObjectMapper() {
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
+        return objectMapper;
     }
 
 }

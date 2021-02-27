@@ -15,11 +15,11 @@ import java.util.List;
 public class MetricTuple implements Comparable<MetricTuple> {
 
     private String name;
-    private Integer count;
+    private Long count;
 
     @Override
     public int compareTo(MetricTuple o) {
-        return count - o.count; // TODO: handle nulls
+        return (int)(count - o.count); // TODO: handle nulls and test that empty results are sorted last
     }
 
     public List<Object> getAsTuple() {
@@ -27,6 +27,13 @@ public class MetricTuple implements Comparable<MetricTuple> {
         tuple.add(name);
         tuple.add(count);
         return tuple;
+    }
+
+    public static MetricTuple emptyResult() {
+        return new EmptyResult();
+    }
+
+    public static class EmptyResult extends MetricTuple {
     }
 
 }

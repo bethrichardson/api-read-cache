@@ -1,5 +1,6 @@
 package com.netflix.repositories.domain.metrics
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.netflix.repositories.ComponentTest
 import com.netflix.repositories.client.MetricsCachingClient
 import com.netflix.repositories.domain.metrics.github.CachingGitHubClient
@@ -24,6 +25,9 @@ class MetricsResourceSpec extends Specification implements MetricsTestingSupport
 
     @Autowired
     MetricsService metricsService
+
+    @Autowired
+    ObjectMapper githubObjectMapper;
 
     def "should call through to API when unhandled path requested"() {
         given:
@@ -125,13 +129,13 @@ class MetricsResourceSpec extends Specification implements MetricsTestingSupport
         1 * spotifyGitHubClient.listOrganizationRepositories() >> CompletableFuture.completedFuture(expectedList)
 
         when:
-        String actualList = metricsCachingClient.getOrganizationRepos("Netflix")
+        Object actualList = metricsCachingClient.getOrganizationRepos("Netflix")
 
         then:
-        assert actualList == expectedList.toString()
+        assert actualList == githubObjectMapper.readValue(githubObjectMapper.writeValueAsString(expectedList), Object)
     }
 
-    def "should return a list of top N forks"() {
+    def "should return a list of top N repositories by number of forks"() {
         given:
         int numberRepos = 5
         List<Repository> expectedList = buildRepositoryList(10)
@@ -182,6 +186,24 @@ class MetricsResourceSpec extends Specification implements MetricsTestingSupport
 
         then:
         assert actualList.size() == 3
+    }
+
+    def "should return a list of top N repositories by last updated time"() {
+        given:
+        int numberRepos = 5
+        List<Repository> expectedList = buildRepositoryList(10)
+
+        when:
+        metricsService.refreshAllData()
+
+        then:
+        1 * spotifyGitHubClient.listOrganizationRepositories() >> CompletableFuture.completedFuture(expectedList)
+
+        when:
+        List<List<Object>> actualList = metricsCachingClient.getTopRepositoriesByLastUpdated(numberRepos)
+
+        then:
+        assert actualList.size() == numberRepos
     }
 
 }
