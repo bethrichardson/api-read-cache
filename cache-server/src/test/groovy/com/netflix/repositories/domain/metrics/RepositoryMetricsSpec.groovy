@@ -24,7 +24,7 @@ class RepositoryMetricsSpec extends Specification  {
     MetricsCache cache
 
     def setup() {
-       cache.metricsCache.invalidateAll()
+       cache.cache.invalidateAll()
     }
 
     def "should call out to get a list of Netflix repos"() {

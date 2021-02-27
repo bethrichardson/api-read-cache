@@ -2,7 +2,6 @@ package com.netflix.repositories.domain.metrics;
 
 import com.netflix.repositories.client.ResourcePaths;
 import com.netflix.repositories.common.RepositoryMetric;
-import com.netflix.repositories.domain.github.GithubService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;

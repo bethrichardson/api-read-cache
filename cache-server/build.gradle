@@ -30,3 +30,7 @@ dependencies {
 springBoot {
     mainClassName = 'com.netflix.repositories.RepositoryMetrics'
 }
+
+pmd {
+    ruleSets = ["rulesets/java/quickstart.xml"]
+}

@@ -1,13 +1,12 @@
 package com.netflix.repositories.domain.metrics.caching;
 
-import com.google.common.base.Ticker;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.util.concurrent.UncheckedExecutionException;
 import com.netflix.repositories.common.RepositoryMetric;
-import com.netflix.repositories.domain.github.GithubService;
 import com.netflix.repositories.domain.metrics.MetricType;
+import com.netflix.repositories.domain.metrics.MetricsCollector;
 import lombok.SneakyThrows;
 
 import java.time.Duration;
@@ -17,41 +16,56 @@ import java.util.List;
 
 public class MetricsCache {
 
-    private static final Duration REFRESH_INTERVAL = Duration.ofMinutes(5); // TODO: make configurable
+    public static final Duration DEFAULT_REFRESH_INTERVAL = Duration.ofMinutes(5); // TODO: make configurable
     private static final String THREAD_PREFIX = "metrics-cache";
+    private Duration refreshInterval;
 
-    private GithubService githubService;
+    private final MetricsCollector metricsCollector;
     private final TimeProvider timeProvider;
+    protected CacheRefresher cacheRefresher;
 
-    private LoadingCache<String, List<RepositoryMetric>> metricsCache;
+    private LoadingCache<String, List<RepositoryMetric>> cache;
 
-    public MetricsCache(GithubService service, TimeProvider timeProvider) {
-        this.githubService = service;
+    public MetricsCache(MetricsCollector metricsCollector, TimeProvider timeProvider) {
+        this.metricsCollector = metricsCollector;
         this.timeProvider = timeProvider;
+        setRefreshInterval(DEFAULT_REFRESH_INTERVAL);
     }
 
     void initializeCache() {
-        metricsCache = CacheBuilder.newBuilder()
-                .refreshAfterWrite(REFRESH_INTERVAL)
-                .ticker(new Ticker() {
-                    @Override
-                    public long read() {
-                        return timeProvider.getNanoTime();
-                    }
-                })
-                .build(CacheLoader.asyncReloading(new CacheLoader<String, List<RepositoryMetric>>() {
-                    @Override
-                    public List<RepositoryMetric> load(String metricName) {
-                        return updateMetricsInCache(MetricType.valueOf(metricName));
-                    }
-                }, ThreadPoolExecutorFactory.build(THREAD_PREFIX)));
-        Arrays.stream(MetricType.values()).forEach(this::getMetric);
+        cache = CacheBuilder.newBuilder()
+                .refreshAfterWrite(refreshInterval)
+                .ticker(timeProvider)
+                .build(CacheLoader.asyncReloading(new MetricsCacheLoader(), ThreadPoolExecutorFactory.build(THREAD_PREFIX)));
+        updateAllValues();
+        cacheRefresher = new CacheRefresher(this);
+        cacheRefresher.start();
+    }
+
+    private class MetricsCacheLoader extends CacheLoader<String, List<RepositoryMetric>> {
+        @Override
+        public List<RepositoryMetric> load(String metricName) {
+            return updateMetricsInCache(MetricType.valueOf(metricName));
+        }
+    }
+
+    private void setRefreshInterval(Duration refreshInterval) {
+        this.refreshInterval = refreshInterval;
+    }
+
+    Duration getRefreshInterval() {
+        return refreshInterval;
+    }
+
+    protected void updateAllValues() {
+        cache.invalidateAll();
+        Arrays.stream(MetricType.values()).map(MetricType::name).forEach(cache::getUnchecked);
     }
 
     private List<RepositoryMetric> updateMetricsInCache(MetricType metricType) {
         switch (metricType) {
             case FORKS:
-                return githubService.getForkMetrics();
+                return metricsCollector.getForkMetrics();
             default:
                 return new ArrayList<>();
 
@@ -61,13 +75,10 @@ public class MetricsCache {
     @SneakyThrows
     public List<RepositoryMetric> getMetric(MetricType metricType) {
         try {
-            return metricsCache.getUnchecked(metricType.name());
+            return cache.getUnchecked(metricType.name());
         } catch (UncheckedExecutionException e) {
             throw e.getCause();
         }
     }
-
-
-
 
 }

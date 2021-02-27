@@ -1,7 +1,7 @@
 package com.netflix.repositories.domain.metrics.caching;
 
 import com.netflix.repositories.domain.github.GithubConfig;
-import com.netflix.repositories.domain.github.GithubService;
+import com.netflix.repositories.domain.github.GithubMetricsCollector;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,7 +14,7 @@ import org.springframework.context.annotation.Import;
 public class CachingConfig {
 
     @Autowired
-    GithubService githubService;
+    GithubMetricsCollector githubMetricsCollector;
 
     public TimeProvider timeProvider() {
         return new TimeProvider();
@@ -22,7 +22,7 @@ public class CachingConfig {
 
     @Bean
     public MetricsCache metricsCache() {
-        MetricsCache cache = new MetricsCache(githubService, timeProvider());
+        MetricsCache cache = new MetricsCache(githubMetricsCollector, timeProvider());
         cache.initializeCache();
         return cache;
     }
