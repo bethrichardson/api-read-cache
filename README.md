@@ -78,6 +78,7 @@ that can be accessed at the following URLs:
 | ------------------------- | ---------------------------------------------- |
 |`/view/top/N/forks`        | Top-N repos by number of forks                 |
 |`/view/top/N/last_updated` | Top-N repos by updated time (most recent first)|
+|`/view/top/N/open_issues ` | Top-N repos by number of open issues           |
 
 ### Healthcheck
 The application will respond on `/healthcheck` with a 200 status when it is ready to receive requests.

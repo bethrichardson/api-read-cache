@@ -23,6 +23,7 @@ public class RepositoryMetric implements Metric<List<Repository>> {
         Map<ViewType, List<MetricTuple>> views = new HashMap<>();
         addView(views, ViewType.FORKS, RepositoryMetric::getForkMetrics);
         addView(views, ViewType.LAST_UPDATED, RepositoryMetric::getLastUpdatedMetrics);
+        addView(views, ViewType.OPEN_ISSUES, RepositoryMetric::getOpenIssueMetrics);
         return views;
     }
 
@@ -68,4 +69,22 @@ public class RepositoryMetric implements Metric<List<Repository>> {
                 .sorted(Comparator.reverseOrder())
                 .collect(Collectors.toList());
     }
+
+    public static List<MetricTuple> getOpenIssueMetrics(List<Repository> repositories) {
+        return repositories.stream()
+                .map(RepositoryMetric::getOpenIssueMetrics)
+                .sorted(Comparator.reverseOrder())
+                .collect(Collectors.toList());
+    }
+
+    public static MetricTuple getOpenIssueMetrics(Repository repository) {
+        if (repository.openIssuesCount() != null) {
+            return MetricTuple.builder()
+                    .name(repository.name())
+                    .count(Long.valueOf(repository.openIssuesCount()))
+                    .build();
+        }
+        return MetricTuple.emptyResult();
+    }
+
 }

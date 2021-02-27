@@ -9,5 +9,6 @@ public interface ResourcePaths {
     String VIEW = "/view/top";
     String FORKS = "/forks";
     String LAST_UPDATED = "/last_updated";
+    String OPEN_ISSUES = "/open_issues";
 
 }

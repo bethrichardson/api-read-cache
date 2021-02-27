@@ -36,4 +36,7 @@ public interface MetricsCachingClient {
     @RequestLine("GET " + VIEW + "/{numResults}" + LAST_UPDATED)
     List<List<Object>> getTopRepositoriesByLastUpdated(@Param("numResults") Integer numResults);
 
+    @RequestLine("GET " + VIEW + "/{numResults}" + OPEN_ISSUES)
+    List<List<Object>> getTopRepositoriesByOpenIssueCount(@Param("numResults") Integer numResults);
+
 }

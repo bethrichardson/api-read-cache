@@ -66,6 +66,10 @@ public class MetricsService {
         return repositoryCache.getView(ViewType.LAST_UPDATED, numRepos);
     }
 
+    public List<MetricTuple> getMetricsByOpenIssues(int numRepos) {
+        return repositoryCache.getView(ViewType.OPEN_ISSUES, numRepos);
+    }
+
     /**
      * This could be exposed to clear the cache via service call with
      * appropriate access control.

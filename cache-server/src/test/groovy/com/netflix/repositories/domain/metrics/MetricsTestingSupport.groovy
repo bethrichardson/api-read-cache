@@ -15,6 +15,7 @@ trait MetricsTestingSupport {
                     .builder()
                     .forksCount(it)
                     .updatedAt(GitHubInstant.create(Instant.now()))
+                    .openIssuesCount(it)
                     .build())
         }
         expectedList
