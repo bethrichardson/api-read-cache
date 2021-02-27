@@ -1,7 +1,6 @@
 package com.netflix.repositories;
 
-import com.netflix.repositories.domain.metrics.members.MembersMetricsConfig;
-import com.netflix.repositories.domain.metrics.overview.OverviewMetricsConfig;
+import com.netflix.repositories.domain.metrics.proxied.ProxiedMetricsConfig;
 import com.netflix.repositories.domain.metrics.repositories.RepositoryMetricsConfig;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.actuate.autoconfigure.health.HealthEndpointAutoConfiguration;
@@ -27,8 +26,7 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
         WebMvcMetricsAutoConfiguration.class,
         ServletWebServerFactoryAutoConfiguration.class,
         RepositoryMetricsConfig.class,
-        MembersMetricsConfig.class,
-        OverviewMetricsConfig.class,
+        ProxiedMetricsConfig.class,
 })
 @EnableWebMvc
 @EnableAutoConfiguration
