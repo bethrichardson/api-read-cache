@@ -3,17 +3,24 @@ package com.netflix.apireadcache.metrics.caching
 import com.netflix.apireadcache.ComponentTest
 import com.netflix.apireadcache.metrics.MetricCollector
 import com.netflix.apireadcache.metrics.MetricTuple
+import com.netflix.apireadcache.metrics.MetricType
 import com.netflix.apireadcache.metrics.MetricsTestingSupport
 import com.netflix.apireadcache.metrics.ViewType
 import com.netflix.apireadcache.metrics.repositories.RepositoryMetric
 import com.spotify.github.v3.repos.Repository
+import org.springframework.beans.factory.annotation.Autowired
 import spock.lang.Specification
 import spock.util.concurrent.PollingConditions
 
 import java.time.Duration
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.ScheduledExecutorService
 
 @ComponentTest
 class MetricsCacheSpec extends Specification implements MetricsTestingSupport {
+
+    @Autowired
+    ScheduledExecutorService scheduledExecutorService
 
     StubMetricTupleCollector metricsCollector
     MetricsCache cache
@@ -23,7 +30,11 @@ class MetricsCacheSpec extends Specification implements MetricsTestingSupport {
     def setup() {
         expectedList = buildRepositoryList(numberRepos)
         metricsCollector = new StubMetricTupleCollector(expectedList)
-        cache = new MetricsCache(metricsCollector)
+        CachingStrategy cachingStrategy = CachingStrategy.builder()
+                                            .executorService(scheduledExecutorService)
+                                            .refreshFrequency(Duration.ofMillis(500))
+                                            .build()
+        cache = new MetricsCache(metricsCollector, cachingStrategy)
     }
 
     def "should call out to get a list of Netflix repos when initialized and pull value from cache for subsequent requests"() {
@@ -39,9 +50,6 @@ class MetricsCacheSpec extends Specification implements MetricsTestingSupport {
     }
 
     def "should call out to get a list of Netflix repos at the duration set on the cache even if not requested"() {
-        given:
-        cache.setRefreshInterval(Duration.ofMillis(500))
-
         when:
         cache.initializeCache()
 
@@ -68,6 +76,16 @@ class MetricsCacheSpec extends Specification implements MetricsTestingSupport {
         RepositoryMetric getMetric() {
             interactionCount++;
             return value;
+        }
+
+        @Override
+        ViewType[] getSupportedViews() {
+            return ViewType.values()
+        }
+
+        @Override
+        MetricType getMetricType() {
+            return MetricType.REPOSITORY_METRICS
         }
     }
 

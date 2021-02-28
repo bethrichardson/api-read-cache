@@ -21,7 +21,7 @@ public class MetricsService {
     private ProxiedMetricCache membersMetricCache;
 
     @Autowired
-    ProxiedGitHubClient gitHubClient;
+    private ProxiedGitHubClient gitHubClient;
 
     @Autowired
     private RepositoryMetricCache repositoryMetricCache;

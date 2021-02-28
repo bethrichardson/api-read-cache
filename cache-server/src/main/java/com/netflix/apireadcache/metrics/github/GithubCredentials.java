@@ -12,6 +12,6 @@ public class GithubCredentials {
     private final transient String apiToken;
 
     @Getter
-    private final transient String organization;
+    private final transient String apiUrl;
 
 }
