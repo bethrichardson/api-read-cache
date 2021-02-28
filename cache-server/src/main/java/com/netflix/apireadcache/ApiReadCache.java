@@ -1,7 +1,6 @@
 package com.netflix.apireadcache;
 
-import com.netflix.apireadcache.metrics.proxied.ProxiedMetricsConfig;
-import com.netflix.apireadcache.metrics.repositories.RepositoryMetricsConfig;
+import com.netflix.apireadcache.metrics.caching.CacheConfig;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.actuate.autoconfigure.health.HealthEndpointAutoConfiguration;
 import org.springframework.boot.actuate.autoconfigure.metrics.web.servlet.WebMvcMetricsAutoConfiguration;
@@ -25,8 +24,7 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
         HttpEncodingAutoConfiguration.class,
         WebMvcMetricsAutoConfiguration.class,
         ServletWebServerFactoryAutoConfiguration.class,
-        RepositoryMetricsConfig.class,
-        ProxiedMetricsConfig.class,
+        CacheConfig.class,
 })
 @EnableWebMvc
 @EnableAutoConfiguration

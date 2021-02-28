@@ -3,6 +3,7 @@ package com.netflix.apireadcache.metrics
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.netflix.apireadcache.ComponentTest
 import com.netflix.apireadcache.client.ApiReadCache
+
 import com.netflix.apireadcache.metrics.github.ProxiedGitHubClient
 import com.spotify.github.v3.clients.RepositoryClient
 import com.spotify.github.v3.repos.Repository
@@ -10,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired
 import spock.lang.Specification
 
 import java.util.concurrent.CompletableFuture
+
+import static com.netflix.apireadcache.metrics.github.GithubConfig.NETFLIX
 
 @ComponentTest
 class MetricsResourceSpec extends Specification implements MetricsTestingSupport {
@@ -86,10 +89,10 @@ class MetricsResourceSpec extends Specification implements MetricsTestingSupport
         metricsService.refreshAllData()
 
         then:
-        1 * cachingGitHubClient.getOrganization("Netflix") >> fakeResult
+        1 * cachingGitHubClient.getOrganization(NETFLIX) >> fakeResult
 
         when:
-        Object actual = metricsCachingClient.getOrganization("Netflix")
+        Object actual = metricsCachingClient.getOrganization(NETFLIX)
 
         then:
         assert actual.toString().contains("netflixoss@netflix.com")
@@ -109,10 +112,10 @@ class MetricsResourceSpec extends Specification implements MetricsTestingSupport
         metricsService.refreshAllData()
 
         then:
-        1 * cachingGitHubClient.getOrganizationMembers("Netflix") >> fakeResult
+        1 * cachingGitHubClient.getOrganizationMembers(NETFLIX) >> fakeResult
 
         when:
-        Object actual = metricsCachingClient.getOrganizationMembers("Netflix")
+        Object actual = metricsCachingClient.getOrganizationMembers(NETFLIX)
 
         then:
         assert actual.toString().contains("fakeid")
@@ -120,19 +123,31 @@ class MetricsResourceSpec extends Specification implements MetricsTestingSupport
 
     def "should return a flat list of repos when requested"() {
         given:
-        List<Repository> expectedList = buildRepositoryList(10)
+        Object fakeResult = '''
+            [  
+             {
+                "id": 9533057,
+                "full_name": "Netflix/brutal",
+                "fork": false,
+                "url": "https://api.github.com/repos/Netflix/brutal",
+                "stargazers_count": 194,
+                "forks": 42,
+                "open_issues": 10
+             }
+            ]
+        '''
 
         when:
         metricsService.refreshAllData()
 
         then:
-        1 * spotifyGitHubClient.listOrganizationRepositories() >> CompletableFuture.completedFuture(expectedList)
+        1 * cachingGitHubClient.getRepositoryView(NETFLIX) >> fakeResult
 
         when:
-        Object actualList = metricsCachingClient.getOrganizationRepos("Netflix")
+        Object actual = metricsCachingClient.getOrganizationRepos(NETFLIX)
 
         then:
-        assert actualList == githubObjectMapper.readValue(githubObjectMapper.writeValueAsString(expectedList), Object)
+        assert actual.toString().contains("brutal")
     }
 
     def "should return a list of top N repositories by number of forks"() {

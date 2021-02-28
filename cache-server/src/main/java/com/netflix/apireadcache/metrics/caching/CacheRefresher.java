@@ -2,7 +2,6 @@ package com.netflix.apireadcache.metrics.caching;
 
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
@@ -10,19 +9,23 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class CacheRefresher implements Runnable {
 
-    private ReloadingCache cache;
+    private final RefreshingCache<?> cache;
+    private final ScheduledExecutorService executorService;
     private ScheduledFuture<?> runningHandler;
 
-    public CacheRefresher(ReloadingCache cache) {
+    /**
+     * Refreshes the data in the cache at the frequency specified on the cache.
+     * @param cache The cache to refresh
+     * @param executorService The cache executor service shares a pool of threads to refresh cache data
+     */
+    public CacheRefresher(RefreshingCache<?> cache, ScheduledExecutorService executorService) {
         this.cache = cache;
+        this.executorService = executorService;
     }
-
-    private final ScheduledExecutorService scheduler =
-            Executors.newScheduledThreadPool(1);
 
     @Override
     public void run() {
-        log.info("Updating all values in metrics cache.");
+        log.info("Starting cache refresh process for {} data.", cache.getMetricType());
         cache.refreshData();
     }
 
@@ -32,8 +35,8 @@ public class CacheRefresher implements Runnable {
     }
 
     public void start() {
-        runningHandler = scheduler.scheduleAtFixedRate(this, cache.getRefreshInterval().toNanos(),
-                cache.getRefreshInterval().toNanos(), TimeUnit.NANOSECONDS);
+        runningHandler = executorService.scheduleAtFixedRate(this, cache.getRefreshFrequency().toNanos(),
+                cache.getRefreshFrequency().toNanos(), TimeUnit.NANOSECONDS);
     }
 
 

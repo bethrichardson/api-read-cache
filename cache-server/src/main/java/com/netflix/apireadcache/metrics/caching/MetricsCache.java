@@ -4,17 +4,28 @@ import com.netflix.apireadcache.metrics.Metric;
 import com.netflix.apireadcache.metrics.MetricCollector;
 import com.netflix.apireadcache.metrics.MetricTuple;
 import com.netflix.apireadcache.metrics.ViewType;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-public class MetricsCache<T> extends ReloadingCache<T> {
+/**
+ * Stores a reference to a given type of data and refreshes it from the metricCollector according to the configured refreshFrequency.
+ * The cache refreshes all views for the metric at the time that it refreshes data.
+ * @param <T> The type of data stored in the cache
+ */
+ @Slf4j
+public class MetricsCache<T> extends RefreshingCache<T> {
 
     private final MetricCollector<T> metricCollector;
 
-    public MetricsCache(MetricCollector<T> metricCollector) {
-        super();
+    /**
+     * @param metricCollector The collection source for the metric cached
+     * @param strategy The strategy for how to refresh the data in the cache
+     */
+    public MetricsCache(MetricCollector<T> metricCollector, CachingStrategy strategy) {
+        super(metricCollector.getMetricType(), metricCollector.getSupportedViews(), strategy);
         this.metricCollector = metricCollector;
     }
 
@@ -43,6 +54,7 @@ public class MetricsCache<T> extends ReloadingCache<T> {
 
     @Override
     public void refreshData() {
+        log.info("Refreshing data for {}", metricCollector.getMetricType());
         Metric<T> metric = metricCollector.getMetric();
         if (metric != null) { // prefer to retain data
             updateAllViews(metric);
