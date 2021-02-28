@@ -11,6 +11,7 @@ The following design decisions are documented as part of this project:
 - [Using Spring Boot and Java](docs/adr/0001-springboot.md)
 - [Using the Netflix OSS Gradle template](docs/adr/0002-built-on-netflix-gradle-templates.md)
 - [Using Spotify GitHub Client and a Feign Client to interact with GitHub](docs/adr/0003-use-spotify-github-client-for-structured-repo-metrics.md)
+- [Testing with SpringBootTest and Spock](docs/adr/0004-testing-strategy.md)
 
 ## API Reference
 
