@@ -1,4 +1,4 @@
-# Interacting with GitHub Client
+# Interacting with GitHub API
 
 ## Context and Problem Statement
 I needed to either find or create a client to interact with the GitHub API in my service. I needed a way to get structured
@@ -25,7 +25,7 @@ client to retrieve the metrics that back the views for repository data (top N fo
   it did not have any support for members and the other endpoints requested.
   
 * For the cached responses that are cached as plain Objects (thereby caching the proxied response from GitHub API without mutating it),
-I used a Feign client to GitHub with an Object response type and added paths for those that needed caching to be called but the 
+I used a Feign client to GitHub with an Object response type and added paths for those that needed caching to be called by the 
   cache reloader. I also added a passthrough for all other endpoints.
 
 * I am completely uncoupled to the structure of the API responses for the majority of my caching strategy 

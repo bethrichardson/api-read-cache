@@ -68,7 +68,7 @@ public class MetricsResource {
 
     @GetMapping(ResourcePaths.VIEW + "/{numRepositories}" + ResourcePaths.STARS)
     public List<List<Object>> stars(@PathVariable("numRepositories") Integer numRepositories) {
-        return MetricTuple.getAsTuples(metricsService.getTopMetricsByForkCount(numRepositories));
+        return MetricTuple.getAsTuples(metricsService.getTopMetricsByStars(numRepositories));
     }
 
     @RequestMapping(value="**",method = RequestMethod.GET)

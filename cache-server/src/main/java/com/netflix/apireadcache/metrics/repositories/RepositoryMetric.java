@@ -51,6 +51,7 @@ public class RepositoryMetric implements Metric<List<Repository>> {
     private static List<MetricTuple> getMetrics(List<Repository> repositories, Function<Repository, Long> metricCollectionFunction) {
         return repositories.stream()
                 .map(it -> getMetrics(it, metricCollectionFunction))
+                .filter(MetricTuple::isValid)
                 .sorted(Comparator.reverseOrder())
                 .collect(Collectors.toList());
     }

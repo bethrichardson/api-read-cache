@@ -55,6 +55,10 @@ public class MetricTuple implements Comparable<MetricTuple> {
         }
     }
 
+    public boolean isValid() {
+        return name != null && count != null;
+    }
+
     public static MetricTuple emptyResult() {
         return new EmptyResult();
     }

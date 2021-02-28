@@ -13,6 +13,7 @@ trait MetricsTestingSupport {
         numRepos.times {
             expectedList.add(ImmutableRepository
                     .builder()
+                    .fullName("repo-number-" + it)
                     .forksCount(it)
                     .updatedAt(GitHubInstant.create(Instant.now()))
                     .openIssuesCount(it)
