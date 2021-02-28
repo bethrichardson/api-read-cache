@@ -12,12 +12,13 @@ The following design decisions are documented as part of this project:
 - [Using the Netflix OSS Gradle template](docs/adr/0002-built-on-netflix-gradle-templates.md)
 - [Using Spotify GitHub Client and a Feign Client to interact with GitHub](docs/adr/0003-use-spotify-github-client-for-structured-repo-metrics.md)
 - [Testing with SpringBootTest and Spock](docs/adr/0004-testing-strategy.md)
+- [Healthcheck with Spring Boot Actuator](docs/adr/0005-actuator-healthcheck.md)
 
 ## API Reference
 
 ### Caching APIs
 
-The service collects metrics every 5 minutes from the GitHub API and provides cached metrics at the following URLs:
+The service collects metrics according to the configured refresh frequency minutes (default 5 minutes) from the GitHub API and provides cached metrics at the following URLs:
 
 | Endpoint               | Description                                   |
 | ---------------------- | --------------------------------------------- |
