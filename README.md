@@ -4,6 +4,14 @@ A GitHub API read caching service for Netflix organization data. The API Read Ca
 endpoints periodically to avoid overloading the GitHub API with requests. The service proxies all GitHub API endpoints
 outside this set to GitHub.
 
+## Overview of Design Decisions
+
+The following design decisions are documented as part of this project:
+- [Using an in-memory cache](docs/adr/0000-use-in-memory-cache.md)
+- [Using Spring Boot and Java](docs/adr/0001-springboot.md)
+- [Using the Netflix OSS Gradle template](docs/adr/0002-built-on-netflix-gradle-templates.md)
+- [Using Spotify GitHub Client and a Feign Client to interact with GitHub](docs/adr/0003-use-spotify-github-client-for-structured-repo-metrics.md)
+
 ## API Reference
 
 ### Caching APIs
@@ -105,7 +113,3 @@ sh ./api-suite-fixed.sh <port_number>
 
 Note that these specs use static values that change over time and thus have unreliable results. The "fixed" results has
 metrics recorded at the time of its creation.
-
-
-
-
