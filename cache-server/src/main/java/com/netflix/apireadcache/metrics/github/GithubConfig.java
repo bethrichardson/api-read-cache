@@ -50,6 +50,7 @@ public class GithubConfig {
     public ProxiedGitHubClient cachingGithubClient() {
         return Feign.builder()
                 .decoder(new JsonOrTextDecoder())
+                .requestInterceptor(new AuthorizationRequestInterceptor(githubCredentials()))
                 .target(ProxiedGitHubClient.class, apiUrl);
     }
 
