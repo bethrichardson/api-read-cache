@@ -16,7 +16,7 @@ The following design decisions are documented as part of this project:
 
 ## Concepts
 ### Metric
-The data tha service retrieves and caches from the GitHub API is referred to as "metrics" throughout this project. They are
+The data that the service retrieves and caches from the GitHub API is referred to as "metrics" throughout this project. They are
 a snapshot of a set of repository, organization, or other details taken at a moment in time. A lot of the details in the 
 cached data could be seen as configuration (for example, "full name" or access URLs); however, because they are being used
 as a source for reporting views, and generally providing a measurement of the organization's GitHub usage or usage for a given
