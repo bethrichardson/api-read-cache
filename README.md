@@ -13,6 +13,35 @@ The following design decisions are documented as part of this project:
 - [Using Spotify GitHub Client and a Feign Client to interact with GitHub](docs/adr/0003-use-spotify-github-client-for-structured-repo-metrics.md)
 - [Testing with SpringBootTest and Spock](docs/adr/0004-testing-strategy.md)
 - [Healthcheck with Spring Boot Actuator](docs/adr/0005-actuator-healthcheck.md)
+- [All metric values are Long](docs/adr/0006-long-for-metrics.md)
+
+## Concepts
+### Metric
+The data tha service retrieves and caches from the GitHub API is referred to as "metrics" throughout this project. They are
+a snapshot of a set of repository, organization, or other details taken at a moment in time. A lot of the details in the 
+cached data could be seen as configuration (for example, "full name" or access URLs); however, because they are being used
+as a source for reporting views, and generally providing a measurement of the organization's GitHub usage or usage for a given
+repository, all of this data is referred to as metrics.
+
+### View
+The repository metrics are presented as a set of views that are sorted as presenting the Top N of a set of values of a given type.
+Repository metrics are stored and returned as a list of MetricTuples, which are serialized as a list of lists. Each
+list consists of a repository name and the value for that measurement. So for example, when requesting forks, a list including
+the value `["Netflix/Hystrix",4313]` is a metric tuple indicating that the Netflix/Hystrix repository has 4313 forks.
+
+See the Metric View Endpoint reference below for a full overview of all views that the service provides.
+
+### Cache
+The service stores a single snapshot for each metric and updates the metric value according to the refresh frequency defined
+in the caching strategy. The entity that stores the metrics is a cache. Each type of metric has a distinct cache, but all caches 
+share a common thread pool for updating the cache over time.
+
+A cache can have a set of supported views for the data represented within that cache. When the value for the metric is refreshed,
+the view data is pre-aggregated and stored at the same time in the same cache.
+
+The ProxiedMetricCache is a simple type of cache for data that has no pre-determined schema.
+This cache type does not support views, but provides cached storage for a piece of data from the 
+GitHub API, without requiring knowledge of the shape of that data.
 
 ## API Reference
 
@@ -91,13 +120,15 @@ format in the following table in the
 | Option                    | Description                                                                           | Usage                         |
 | ------------------------- | ------------------------------------------------------------------------------------- | ----------------------------- |
 | `github.api.url`          | The URL for the GitHub API. Default is https://api.github.com                         | `github.api.url=<api_url>`    |
-| `port`                    | Configure the port used by the running application. Default is 8080                   | `server.port=<port_number>`   |
+| `server.port`             | Configure the port used by the running application. Default is 8080                   | `server.port=<port_number>`   |
 | `cache.refresh.frequency` | New metrics are collected at this frequency. In Duration format. Default is 5 minutes.| `cache.refresh.frequency=PT5M`|
 | `cache.refresh.threads`   | The number of threads used to refresh the cache. Default is 2 threads.                | `cache.refresh.threads=2`     |
 
 ## Testing
 
-Component tests are included that will execute tests against the running application.
+There is a set of component tests that execute tests against the running application using the provided Java client. 
+The service is configured to start up on localhost at port 10000 for tests.  
+The config for the test client is in application-test.properties as `server.port` and `server.url`.
 
 To run all the tests, run the following command:
 
