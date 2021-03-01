@@ -29,7 +29,6 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @Slf4j
 @RestController
-@SuppressWarnings("PMD.BeanMembersShouldSerialize")
 @RequestMapping(path = "/", produces = APPLICATION_JSON_VALUE)
 public class MetricsResource {
 
@@ -41,26 +40,17 @@ public class MetricsResource {
         return metricsService.getOverview();
     }
 
-    /**
-     * Only returns data for Netflix repositories.
-     */
     @GetMapping(path = ResourcePaths.ORGS + NETFLIX)
     public Object organization() {
         return metricsService.getOrganization();
     }
 
-    /**
-     * Only returns data for Netflix repositories.
-     */
     @SneakyThrows
     @GetMapping(path = ResourcePaths.ORGS + NETFLIX + ResourcePaths.REPOS)
     public Object repositories() {
         return metricsService.getRepositories();
     }
 
-    /**
-     * Only returns data for Netflix repositories.
-     */
     @GetMapping(path = ResourcePaths.ORGS + NETFLIX + ResourcePaths.MEMBERS)
     public Object members() {
         return metricsService.getMembers();

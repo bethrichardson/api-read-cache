@@ -19,6 +19,14 @@ import com.netflix.apireadcache.metrics.MetricCollector;
 import com.netflix.apireadcache.metrics.caching.CachingStrategy;
 import com.netflix.apireadcache.metrics.caching.MetricsCache;
 
+/**
+ * Stores unstructured data from GitHub API to support a cached proxy. Does not allow for views on the data as
+ * the data is stored as it is received from GitHub as a plain Object.
+ *
+ * Compare with RepositoryMetricCache, which has a set of supported views and stores a structured data objet from
+ * the GitHub API for GitHub repositories.
+ * @see com.netflix.apireadcache.metrics.repositories.RepositoryMetricCache
+ */
 public class ProxiedMetricCache extends MetricsCache<Object> {
 
     public ProxiedMetricCache(MetricCollector<Object> metricCollector, CachingStrategy cachingStrategy) {

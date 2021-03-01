@@ -26,7 +26,6 @@ import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Primary;
 import spock.mock.DetachedMockFactory;
 
-@SuppressWarnings("PMD.BeanMembersShouldSerialize")
 @Configuration
 @EnableAutoConfiguration
 @Import({
