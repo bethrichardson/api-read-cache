@@ -44,13 +44,13 @@ pass
 -n test-05-07: /orgs/Netflix/repos languages unique = 
 pass
 -n test-06-01: /view/top/5/forks = 
-fail [[["Netflix/Hystrix",4313],["Netflix/eureka",3059],["Netflix/zuul",1999],["Netflix/SimianArmy",1113],["Netflix/ribbon",1047]] != [["Netflix/Hystrix",4312],["Netflix/eureka",3059],["Netflix/zuul",1999],["Netflix/SimianArmy",1113],["Netflix/ribbon",1047]]]
+pass
 -n test-06-02: /view/top/10/forks = 
-fail [[["Netflix/Hystrix",4313],["Netflix/eureka",3059],["Netflix/zuul",1999],["Netflix/SimianArmy",1113],["Netflix/ribbon",1047],["Netflix/Cloud-Prize",468],["Netflix/archaius",466],["Netflix/curator",436],["Netflix/asgard",436],["Netflix/netflix.github.com",369]] != [["Netflix/Hystrix",4312],["Netflix/eureka",3059],["Netflix/zuul",1999],["Netflix/SimianArmy",1113],["Netflix/ribbon",1047],["Netflix/Cloud-Prize",468],["Netflix/archaius",466],["Netflix/curator",436],["Netflix/asgard",436],["Netflix/netflix.github.com",369]]]
+pass
 -n test-06-03: /view/top/5/last_updated = 
-fail [[["Netflix/zuul",1614467078],["Netflix/Hystrix",1614438633],["Netflix/asgard",1614413551],["Netflix/Turbine",1614410481],["Netflix/EVCache",1614373938]] != [["Netflix/dynomite","2019-05-12T19:18:57Z"],["Netflix/SimianArmy","2019-05-12T19:13:22Z"],["Netflix/Hystrix","2019-05-12T18:50:04Z"],["Netflix/vmaf","2019-05-12T18:17:29Z"],["Netflix/fast_jsonapi","2019-05-12T17:28:08Z"]]]
+pass
 -n test-06-04: /view/top/10/last_updated = 
-fail [[["Netflix/zuul",1614467078],["Netflix/Hystrix",1614438633],["Netflix/asgard",1614413551],["Netflix/Turbine",1614410481],["Netflix/EVCache",1614373938],["Netflix/eureka",1614344684],["Netflix/ribbon",1614310328],["Netflix/aminator",1614286665],["Netflix/SimianArmy",1614281934],["Netflix/servo",1614252691]] != [["Netflix/dynomite","2019-05-12T19:18:57Z"],["Netflix/SimianArmy","2019-05-12T19:13:22Z"],["Netflix/Hystrix","2019-05-12T18:50:04Z"],["Netflix/vmaf","2019-05-12T18:17:29Z"],["Netflix/fast_jsonapi","2019-05-12T17:28:08Z"],["Netflix/eureka","2019-05-12T16:59:05Z"],["Netflix/flamescope","2019-05-12T16:49:11Z"],["Netflix/security_monkey","2019-05-12T16:43:38Z"],["Netflix/chaosmonkey","2019-05-12T16:26:56Z"],["Netflix/lemur","2019-05-12T16:12:16Z"]]]
+pass
 -n test-06-05: /view/top/5/open_issues = 
 pass
 -n test-06-06: /view/top/10/open_issues = 
@@ -59,4 +59,4 @@ pass
 pass
 -n test-06-08: /view/top/10/stars = 
 pass
-26/30 (86.00%) tests passed
+30/30 (100.00%) tests passed

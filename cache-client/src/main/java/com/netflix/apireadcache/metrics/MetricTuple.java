@@ -31,14 +31,14 @@ import java.util.stream.Collectors;
 public class MetricTuple implements Comparable<MetricTuple> {
 
     private String name;
-    private Long count;
+    private Comparable count;
 
     @Override
     public int compareTo(MetricTuple o) {
         if (o instanceof EmptyResult) {
             return 1;
         }
-        return (int)(count - o.count);
+        return this.count.compareTo(o.getCount());
     }
 
     public List<Object> getAsTuple() {

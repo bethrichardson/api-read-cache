@@ -21,6 +21,7 @@ import com.netflix.apireadcache.metrics.ViewType;
 import com.spotify.github.v3.repos.Repository;
 import lombok.AllArgsConstructor;
 
+import java.time.Instant;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -53,7 +54,7 @@ public class RepositoryMetric implements Metric<List<Repository>> {
     }
 
 
-    private static MetricTuple getMetrics(Repository repository, Function<Repository, Long> metricCollectionFunction) {
+    private static MetricTuple getMetrics(Repository repository, Function<Repository, Comparable> metricCollectionFunction) {
         if (metricCollectionFunction.apply(repository) != null) {
             return MetricTuple.builder()
                     .name(repository.fullName())
@@ -63,7 +64,7 @@ public class RepositoryMetric implements Metric<List<Repository>> {
         return MetricTuple.emptyResult();
     }
 
-    private static List<MetricTuple> getMetrics(List<Repository> repositories, Function<Repository, Long> metricCollectionFunction) {
+    private static List<MetricTuple> getMetrics(List<Repository> repositories, Function<Repository, Comparable> metricCollectionFunction) {
         return repositories.stream()
                 .map(it -> getMetrics(it, metricCollectionFunction))
                 .filter(MetricTuple::isValid)
@@ -71,30 +72,30 @@ public class RepositoryMetric implements Metric<List<Repository>> {
                 .collect(Collectors.toList());
     }
 
-    public static Long getNumberForks(Repository repository) {
+    public static Integer getNumberForks(Repository repository) {
         if (repository.forksCount()!= null) {
-            return Long.valueOf(repository.forksCount());
+            return repository.forksCount();
         }
         return null;
     }
 
-    public static Long getLastUpdated(Repository repository) {
+    public static Comparable<Instant> getLastUpdated(Repository repository) {
         if (repository.updatedAt() != null && repository.updatedAt().instant() != null) {
-            return repository.updatedAt().instant().getEpochSecond();
+            return repository.updatedAt().instant();
         }
         return null;
     }
 
-    public static Long getOpenIssues(Repository repository) {
+    public static Integer getOpenIssues(Repository repository) {
         if (repository.openIssuesCount()!= null) {
-            return Long.valueOf(repository.openIssuesCount());
+            return repository.openIssuesCount();
         }
         return null;
     }
 
-    public static Long getNumberStars(Repository repository) {
+    public static Integer getNumberStars(Repository repository) {
         if (repository.stargazersCount()!= null) {
-            return Long.valueOf(repository.stargazersCount());
+            return repository.stargazersCount();
         }
         return null;
     }

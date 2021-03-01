@@ -34,6 +34,21 @@ class MetricTupleSpec extends Specification {
         assert smaller == same
     }
 
+    def "should sort two tuples by timestamp"() {
+        when:
+        MetricTuple smaller = MetricTuple.builder().count(-1).build()
+        MetricTuple larger = MetricTuple.builder().count(5).build()
+
+        then:
+        assert smaller < larger
+
+        and:
+        MetricTuple same = MetricTuple.builder().count(-1).build()
+
+        then:
+        assert smaller == same
+    }
+
     def "should always sort empty results to the bottom"() {
         when:
         MetricTuple emptyResult = MetricTuple.emptyResult()

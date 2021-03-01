@@ -16,6 +16,7 @@
 package com.netflix.apireadcache;
 
 import com.netflix.apireadcache.metrics.caching.CacheConfig;
+import com.netflix.apireadcache.metrics.github.ObjectMapperConfig;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.actuate.autoconfigure.health.HealthEndpointAutoConfiguration;
 import org.springframework.boot.actuate.autoconfigure.metrics.web.servlet.WebMvcMetricsAutoConfiguration;
@@ -38,6 +39,7 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
         HttpMessageConvertersAutoConfiguration.class,
         HttpEncodingAutoConfiguration.class,
         WebMvcMetricsAutoConfiguration.class,
+        ObjectMapperConfig.class,
         ServletWebServerFactoryAutoConfiguration.class,
         CacheConfig.class,
 })
