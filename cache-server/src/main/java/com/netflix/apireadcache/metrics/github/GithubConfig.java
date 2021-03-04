@@ -52,8 +52,8 @@ public class GithubConfig {
     }
 
     @Bean
-    public GitHubRepositoryPageReader pageTurner(ProxiedGitHubClient client, ObjectMapper mapper) {
-        return GitHubRepositoryPageReader
+    public GitHubPageReader pageTurner(ProxiedGitHubClient client, ObjectMapper mapper) {
+        return GitHubPageReader
                 .builder()
                 .objectMapper(mapper)
                 .client(client)

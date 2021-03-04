@@ -18,7 +18,7 @@ package com.netflix.apireadcache.metrics.caching;
 import com.netflix.apireadcache.metrics.MetricType;
 import com.netflix.apireadcache.metrics.github.GithubConfig;
 import com.netflix.apireadcache.metrics.github.ProxiedGitHubClient;
-import com.netflix.apireadcache.metrics.github.GitHubRepositoryPageReader;
+import com.netflix.apireadcache.metrics.github.GitHubPageReader;
 import com.netflix.apireadcache.metrics.proxied.ProxiedMetric;
 import com.netflix.apireadcache.metrics.proxied.ProxiedMetricCache;
 import com.netflix.apireadcache.metrics.proxied.ProxiedMetricCollector;
@@ -26,6 +26,7 @@ import com.netflix.apireadcache.metrics.repositories.RepositoryMetricCache;
 import com.netflix.apireadcache.metrics.repositories.RepositoryMetricCollector;
 import com.spotify.github.v3.clients.GitHubClient;
 import com.spotify.github.v3.clients.RepositoryClient;
+import feign.Response;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
@@ -38,6 +39,7 @@ import org.springframework.context.annotation.Import;
 import java.time.Duration;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.function.Function;
 
 import static com.netflix.apireadcache.metrics.github.GithubConfig.NETFLIX;
 
@@ -99,8 +101,10 @@ public class CacheConfig {
     }
 
     @Bean
-    public ProxiedMetricCache repositoryViewCache(GitHubRepositoryPageReader gitHubRepositoryPageReader) {
-        ProxiedMetricCollector collector = new ProxiedMetricCollector(MetricType.REPOSITORIES, ()-> new ProxiedMetric(gitHubRepositoryPageReader.getAllRepositoriesForAllPages(NETFLIX)));
+    public ProxiedMetricCache repositoryViewCache(ProxiedGitHubClient client, GitHubPageReader gitHubPageReader) {
+        Function<Integer, Response> getRepositoryPage = (Integer page) -> client.getRepositoryView(NETFLIX, page);
+        ProxiedMetricCollector collector = new ProxiedMetricCollector(MetricType.REPOSITORIES, ()->
+                new ProxiedMetric(gitHubPageReader.getAll(getRepositoryPage)));
         ProxiedMetricCache cache = new ProxiedMetricCache(collector, cachingStrategy());
         cache.initializeCache();
         return cache;
