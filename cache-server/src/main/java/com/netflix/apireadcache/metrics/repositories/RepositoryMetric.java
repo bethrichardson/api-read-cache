@@ -1,12 +1,12 @@
 /**
  * Copyright 2021 Netflix, Inc.
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -18,8 +18,9 @@ package com.netflix.apireadcache.metrics.repositories;
 import com.netflix.apireadcache.metrics.Metric;
 import com.netflix.apireadcache.metrics.MetricTuple;
 import com.netflix.apireadcache.metrics.ViewType;
-import com.spotify.github.v3.repos.Repository;
 import lombok.AllArgsConstructor;
+import lombok.SneakyThrows;
+import org.kohsuke.github.GHRepository;
 
 import java.time.Instant;
 import java.util.Comparator;
@@ -30,9 +31,9 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @AllArgsConstructor
-public class RepositoryMetric implements Metric<List<Repository>> {
+public class RepositoryMetric implements Metric<List<GHRepository>> {
 
-    private final List<Repository> value;
+    private final List<GHRepository> value;
 
     @Override
     public Map<ViewType, List<MetricTuple>> getViews() {
@@ -44,27 +45,27 @@ public class RepositoryMetric implements Metric<List<Repository>> {
         return views;
     }
 
-    private void addView(Map<ViewType, List<MetricTuple>> views, ViewType type, Function<List<Repository>, List<MetricTuple>> metricAggregationFunction) {
+    private void addView(Map<ViewType, List<MetricTuple>> views, ViewType type, Function<List<GHRepository>, List<MetricTuple>> metricAggregationFunction) {
         views.put(type, metricAggregationFunction.apply(value));
     }
 
     @Override
-    public List<Repository> getValue() {
+    public List<GHRepository> getValue() {
         return value;
     }
 
 
-    private static MetricTuple getMetrics(Repository repository, Function<Repository, Comparable> metricCollectionFunction) {
+    private static MetricTuple getMetrics(GHRepository repository, Function<GHRepository, Comparable> metricCollectionFunction) {
         if (metricCollectionFunction.apply(repository) != null) {
             return MetricTuple.builder()
-                    .name(repository.fullName())
+                    .name(repository.getFullName())
                     .count(metricCollectionFunction.apply(repository))
                     .build();
         }
         return MetricTuple.emptyResult();
     }
 
-    private static List<MetricTuple> getMetrics(List<Repository> repositories, Function<Repository, Comparable> metricCollectionFunction) {
+    private static List<MetricTuple> getMetrics(List<GHRepository> repositories, Function<GHRepository, Comparable> metricCollectionFunction) {
         return repositories.stream()
                 .map(it -> getMetrics(it, metricCollectionFunction))
                 .filter(MetricTuple::isValid)
@@ -72,32 +73,24 @@ public class RepositoryMetric implements Metric<List<Repository>> {
                 .collect(Collectors.toList());
     }
 
-    public static Integer getNumberForks(Repository repository) {
-        if (repository.forksCount()!= null) {
-            return repository.forksCount();
+    public static Integer getNumberForks(GHRepository repository) {
+        return repository.getForksCount();
+    }
+
+    @SneakyThrows
+    public static Comparable<Instant> getLastUpdated(GHRepository repository) {
+        if (repository.getUpdatedAt() != null) {
+            return repository.getUpdatedAt().toInstant();
         }
         return null;
     }
 
-    public static Comparable<Instant> getLastUpdated(Repository repository) {
-        if (repository.updatedAt() != null && repository.updatedAt().instant() != null) {
-            return repository.updatedAt().instant();
-        }
-        return null;
+    public static Integer getOpenIssues(GHRepository repository) {
+        return repository.getOpenIssueCount();
     }
 
-    public static Integer getOpenIssues(Repository repository) {
-        if (repository.openIssuesCount()!= null) {
-            return repository.openIssuesCount();
-        }
-        return null;
-    }
-
-    public static Integer getNumberStars(Repository repository) {
-        if (repository.stargazersCount()!= null) {
-            return repository.stargazersCount();
-        }
-        return null;
+    public static Integer getNumberStars(GHRepository repository) {
+        return repository.getStargazersCount();
     }
 
 }

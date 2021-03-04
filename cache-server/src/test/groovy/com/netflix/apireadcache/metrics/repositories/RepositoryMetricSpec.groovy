@@ -17,40 +17,41 @@ package com.netflix.apireadcache.metrics.repositories
 
 import com.netflix.apireadcache.metrics.MetricTuple
 import com.netflix.apireadcache.metrics.ViewType
-import com.spotify.github.v3.repos.Repository
+import org.kohsuke.github.GHRepository
 import spock.lang.Specification
 
 class RepositoryMetricSpec extends Specification {
 
     def "should remove all empty results from a set of repository metrics"() {
         given:
-        Repository repoWithNull = Mock(Repository)
-        repoWithNull.forksCount() >> null
-        repoWithNull.fullName() >> "Netflix/null-forks"
+        GHRepository repoWithNull = Mock(GHRepository)
+        repoWithNull.getUpdatedAt() >> null
+        repoWithNull.getFullName() >> "Netflix/null-forks"
 
-        Repository repoWithForks = Mock(Repository)
-        repoWithForks.forksCount() >> 1500
-        repoWithForks.fullName() >> "Netflix/plastic-fork"
+        Date currentTime = new Date()
+        GHRepository repoWithForks = Mock(GHRepository)
+        repoWithForks.getUpdatedAt() >> new Date()
+        repoWithForks.getFullName() >> "Netflix/plastic-fork"
 
         RepositoryMetric metricWithNullForks = new RepositoryMetric([repoWithForks, repoWithNull])
 
         when:
         Map<ViewType, List<MetricTuple>> views = metricWithNullForks.getViews()
-        List<MetricTuple> forkData = views.get(ViewType.FORKS)
+        List<MetricTuple> updatedData = views.get(ViewType.LAST_UPDATED)
 
         then:
-        assert forkData.size() == 1
-        assert forkData.get(0).count == 1500
+        assert updatedData.size() == 1
+        assert updatedData.get(0).count == currentTime.toInstant()
     }
 
     def "should remove all repositories with no names from a set of repository metrics"() {
         given:
-        Repository repoWithNullName = Mock(Repository)
-        repoWithNullName.forksCount() >> 5
+        GHRepository repoWithNullName = Mock(GHRepository)
+        repoWithNullName.getForksCount() >> 5
 
-        Repository repoWithName = Mock(Repository)
-        repoWithName.forksCount() >> 55
-        repoWithName.fullName() >> "Netflix/banana-monkey"
+        GHRepository repoWithName = Mock(GHRepository)
+        repoWithName.getForksCount() >> 55
+        repoWithName.getFullName() >> "Netflix/banana-monkey"
 
         RepositoryMetric metricWithNullForks = new RepositoryMetric([repoWithName, repoWithNullName])
 

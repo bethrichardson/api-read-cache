@@ -18,27 +18,26 @@ package com.netflix.apireadcache.metrics
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.netflix.apireadcache.ComponentTest
 import com.netflix.apireadcache.client.ApiReadCache
-
 import com.netflix.apireadcache.metrics.github.ProxiedGitHubClient
-import com.spotify.github.v3.clients.RepositoryClient
-import com.spotify.github.v3.repos.Repository
 import feign.Request
 import feign.Response
+import org.kohsuke.github.GHOrganization
+import org.kohsuke.github.GHRepository
+import org.kohsuke.github.GitHub
+import org.kohsuke.github.PagedIterable
 import org.springframework.beans.factory.annotation.Autowired
 import spock.lang.Specification
-
-import java.util.concurrent.CompletableFuture
 
 import static com.netflix.apireadcache.metrics.github.GithubConfig.NETFLIX
 
 @ComponentTest
-class MetricsResourceSpec extends Specification implements MetricsTestingSupport {
+class MetricsResourceSpec extends Specification {
 
     @Autowired
     ApiReadCache metricsCachingClient
 
     @Autowired
-    RepositoryClient spotifyGitHubClient
+    GitHub gitHubClient
 
     @Autowired
     ProxiedGitHubClient cachingGitHubClient
@@ -203,13 +202,17 @@ class MetricsResourceSpec extends Specification implements MetricsTestingSupport
     def "should return a list of top N repositories by number of forks"() {
         given:
         int numberRepos = 5
-        List<Repository> expectedList = buildRepositoryList(10)
+        List<GHRepository> expectedList = buildRepositoryList(10)
+        GHOrganization mockOrg = Mock(GHOrganization)
+        PagedIterable<GHRepository> mockPage = Mock(PagedIterable)
 
         when:
         metricsService.refreshAllData()
 
         then:
-        1 * spotifyGitHubClient.listOrganizationRepositories() >> CompletableFuture.completedFuture(expectedList)
+        1 * gitHubClient.getOrganization(NETFLIX) >> mockOrg
+        1 * mockOrg.listRepositories() >> mockPage
+        1 * mockPage.toList() >> expectedList
 
         when:
         List<List<Object>> actualList = metricsCachingClient.getTopRepositoriesByForkCount(numberRepos)
@@ -226,7 +229,7 @@ class MetricsResourceSpec extends Specification implements MetricsTestingSupport
         metricsService.refreshAllData()
 
         then:
-        1 * spotifyGitHubClient.listOrganizationRepositories() >> { throw new InterruptedException() }
+        1 * gitHubClient.getOrganization(NETFLIX) >> { throw new IOException() }
 
         when:
         List<List<Object>> actualList = metricsCachingClient.getTopRepositoriesByForkCount(numberRepos)
@@ -238,13 +241,17 @@ class MetricsResourceSpec extends Specification implements MetricsTestingSupport
     def "should return all of the repos if that number is less than number requested"() {
         given:
         int numberRepos = 5
-        List<Repository> expectedList = buildRepositoryList(3)
+        List<GHRepository> expectedList = buildRepositoryList(3)
+        GHOrganization mockOrg = Mock(GHOrganization)
+        PagedIterable<GHRepository> mockPage = Mock(PagedIterable)
 
         when:
         metricsService.refreshAllData()
 
         then:
-        1 * spotifyGitHubClient.listOrganizationRepositories() >> CompletableFuture.completedFuture(expectedList)
+        1 * gitHubClient.getOrganization(NETFLIX) >> mockOrg
+        1 * mockOrg.listRepositories() >> mockPage
+        1 * mockPage.toList() >> expectedList
 
         when:
         List<List<Object>> actualList = metricsCachingClient.getTopRepositoriesByForkCount(numberRepos)
@@ -256,13 +263,17 @@ class MetricsResourceSpec extends Specification implements MetricsTestingSupport
     def "should return a list of top N repositories by last updated time"() {
         given:
         int numberRepos = 5
-        List<Repository> expectedList = buildRepositoryList(10)
+        List<GHRepository> expectedList = buildRepositoryList(10)
+        GHOrganization mockOrg = Mock(GHOrganization)
+        PagedIterable<GHRepository> mockPage = Mock(PagedIterable)
 
         when:
         metricsService.refreshAllData()
 
         then:
-        1 * spotifyGitHubClient.listOrganizationRepositories() >> CompletableFuture.completedFuture(expectedList)
+        1 * gitHubClient.getOrganization(NETFLIX) >> mockOrg
+        1 * mockOrg.listRepositories() >> mockPage
+        1 * mockPage.toList() >> expectedList
 
         when:
         List<List<Object>> actualList = metricsCachingClient.getTopRepositoriesByLastUpdated(numberRepos)
@@ -274,13 +285,17 @@ class MetricsResourceSpec extends Specification implements MetricsTestingSupport
     def "should return a list of top N repositories by number of open issues"() {
         given:
         int numberRepos = 5
-        List<Repository> expectedList = buildRepositoryList(10)
+        List<GHRepository> expectedList = buildRepositoryList(10)
+        GHOrganization mockOrg = Mock(GHOrganization)
+        PagedIterable<GHRepository> mockPage = Mock(PagedIterable)
 
         when:
         metricsService.refreshAllData()
 
         then:
-        1 * spotifyGitHubClient.listOrganizationRepositories() >> CompletableFuture.completedFuture(expectedList)
+        1 * gitHubClient.getOrganization(NETFLIX) >> mockOrg
+        1 * mockOrg.listRepositories() >> mockPage
+        1 * mockPage.toList() >> expectedList
 
         when:
         List<List<Object>> actualList = metricsCachingClient.getTopRepositoriesByOpenIssueCount(numberRepos)
@@ -292,19 +307,41 @@ class MetricsResourceSpec extends Specification implements MetricsTestingSupport
     def "should return a list of top N repositories by number of stars"() {
         given:
         int numberRepos = 5
-        List<Repository> expectedList = buildRepositoryList(10)
+        List<GHRepository> expectedList = buildRepositoryList(10)
+        GHOrganization mockOrg = Mock(GHOrganization)
+        PagedIterable<GHRepository> mockPage = Mock(PagedIterable)
 
         when:
         metricsService.refreshAllData()
 
         then:
-        1 * spotifyGitHubClient.listOrganizationRepositories() >> CompletableFuture.completedFuture(expectedList)
+        1 * gitHubClient.getOrganization(NETFLIX) >> mockOrg
+        1 * mockOrg.listRepositories() >> mockPage
+        1 * mockPage.toList() >> expectedList
 
         when:
         List<List<Object>> actualList = metricsCachingClient.getTopRepositoriesByStarCount(numberRepos)
 
         then:
         assert actualList.size() == numberRepos
+    }
+
+    /**
+     * Duplicated because mocks cannot be updated in traits
+     */
+    List<GHRepository> buildRepositoryList(int numRepos) {
+        List<GHRepository> expectedList = []
+
+        numRepos.times {
+            GHRepository repo = Mock(GHRepository)
+            repo.getFullName() >> "repo-number-" + it
+            repo.getForksCount() >> it
+            repo.getUpdatedAt() >> new Date()
+            repo.getOpenIssueCount() >> it
+            repo.getStargazersCount() >> it
+            expectedList.add(repo)
+        }
+        expectedList
     }
 
 }

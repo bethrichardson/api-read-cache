@@ -17,14 +17,14 @@ package com.netflix.apireadcache.metrics.repositories;
 
 import com.netflix.apireadcache.metrics.caching.CachingStrategy;
 import com.netflix.apireadcache.metrics.caching.MetricsCache;
-import com.spotify.github.v3.repos.Repository;
+import org.kohsuke.github.GHRepository;
 
 import java.util.List;
 
 /**
  * Collects and stores repository data from GitHub API and allows for views on that data.
  */
-public class RepositoryMetricCache extends MetricsCache<List<Repository>> {
+public class RepositoryMetricCache extends MetricsCache<List<GHRepository>> {
 
     public RepositoryMetricCache(RepositoryMetricCollector metricCollector, CachingStrategy cachingStrategy) {
         super(metricCollector, cachingStrategy);

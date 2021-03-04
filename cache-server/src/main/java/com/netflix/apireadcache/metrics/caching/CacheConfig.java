@@ -24,12 +24,11 @@ import com.netflix.apireadcache.metrics.proxied.ProxiedMetricCache;
 import com.netflix.apireadcache.metrics.proxied.ProxiedMetricCollector;
 import com.netflix.apireadcache.metrics.repositories.RepositoryMetricCache;
 import com.netflix.apireadcache.metrics.repositories.RepositoryMetricCollector;
-import com.spotify.github.v3.clients.GitHubClient;
-import com.spotify.github.v3.clients.RepositoryClient;
 import feign.Response;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
+import org.kohsuke.github.GitHub;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -111,13 +110,8 @@ public class CacheConfig {
     }
 
     @Bean
-    RepositoryClient repositoryClient(GitHubClient gitHubClient) {
-        return gitHubClient.createRepositoryClient(NETFLIX, null);
-    }
-
-    @Bean
-    RepositoryMetricCollector repositoryMetricCollector(RepositoryClient repositoryClient) {
-        return new RepositoryMetricCollector(repositoryClient);
+    RepositoryMetricCollector repositoryMetricCollector(GitHub client) {
+        return new RepositoryMetricCollector(client, NETFLIX);
     }
 
     @Bean

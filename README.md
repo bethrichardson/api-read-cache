@@ -13,6 +13,7 @@ The following design decisions are documented as part of this project:
 - [Using Spotify GitHub Client and a Feign Client to interact with GitHub](docs/adr/0003-use-spotify-github-client-for-structured-repo-metrics.md)
 - [Testing with SpringBootTest and Spock](docs/adr/0004-testing-strategy.md)
 - [Healthcheck with Spring Boot Actuator](docs/adr/0005-actuator-healthcheck.md)
+- [Using New GitHub Client for Paging](docs/adr/0006-use-kohsuke-github-client-for-paging.md)
 
 ## Concepts
 ### Metric

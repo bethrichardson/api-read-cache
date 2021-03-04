@@ -17,15 +17,15 @@ package com.netflix.apireadcache.metrics.github;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.netflix.apireadcache.config.JsonOrTextDecoder;
-import com.spotify.github.v3.clients.GitHubClient;
 import feign.Feign;
 import lombok.Getter;
+import lombok.SneakyThrows;
+import org.kohsuke.github.GitHub;
+import org.kohsuke.github.GitHubBuilder;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
-
-import java.net.URI;
 
 @Import({
         ObjectMapperConfig.class
@@ -68,9 +68,12 @@ public class GithubConfig {
                 .target(ProxiedGitHubClient.class, apiUrl);
     }
 
+    @SneakyThrows
     @Bean
-    GitHubClient spotifyGithubClient(GithubCredentials credentials) {
-        return GitHubClient.create(URI.create(apiUrl), credentials.getApiToken());
+    public GitHub pagingGitHubClient(GithubCredentials credentials) {
+        return new GitHubBuilder()
+                .withOAuthToken(credentials.getApiToken())
+                .build();
     }
 
 }

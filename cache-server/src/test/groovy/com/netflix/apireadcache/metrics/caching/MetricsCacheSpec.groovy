@@ -19,27 +19,25 @@ import com.netflix.apireadcache.ComponentTest
 import com.netflix.apireadcache.metrics.MetricCollector
 import com.netflix.apireadcache.metrics.MetricTuple
 import com.netflix.apireadcache.metrics.MetricType
-import com.netflix.apireadcache.metrics.MetricsTestingSupport
 import com.netflix.apireadcache.metrics.ViewType
 import com.netflix.apireadcache.metrics.repositories.RepositoryMetric
-import com.spotify.github.v3.repos.Repository
+import org.kohsuke.github.GHRepository
 import org.springframework.beans.factory.annotation.Autowired
 import spock.lang.Specification
 import spock.util.concurrent.PollingConditions
 
 import java.time.Duration
-import java.util.concurrent.ExecutorService
 import java.util.concurrent.ScheduledExecutorService
 
 @ComponentTest
-class MetricsCacheSpec extends Specification implements MetricsTestingSupport {
+class MetricsCacheSpec extends Specification {
 
     @Autowired
     ScheduledExecutorService scheduledExecutorService
 
     StubMetricTupleCollector metricsCollector
     MetricsCache cache
-    List<Repository> expectedList = []
+    List<GHRepository> expectedList = []
     int numberRepos = 5
 
     def setup() {
@@ -77,12 +75,12 @@ class MetricsCacheSpec extends Specification implements MetricsTestingSupport {
         cache.cacheRefresher.cancel()
     }
 
-    private class StubMetricTupleCollector implements MetricCollector<List<Repository>> {
+    private class StubMetricTupleCollector implements MetricCollector<List<GHRepository>> {
 
         RepositoryMetric value
         int interactionCount = 0;
 
-        StubMetricTupleCollector(List<Repository> list) {
+        StubMetricTupleCollector(List<GHRepository> list) {
             value = new RepositoryMetric(list)
             value
         }
@@ -102,6 +100,24 @@ class MetricsCacheSpec extends Specification implements MetricsTestingSupport {
         MetricType getMetricType() {
             return MetricType.REPOSITORY_METRICS
         }
+    }
+
+    /**
+     * Duplicated because mocks cannot be updated in traits
+     */
+    List<GHRepository> buildRepositoryList(int numRepos) {
+        List<GHRepository> expectedList = []
+
+        numRepos.times {
+            GHRepository repo = Mock(GHRepository)
+            repo.getFullName() >> "repo-number-" + it
+            repo.getForksCount() >> it
+            repo.getUpdatedAt() >> new Date()
+            repo.getOpenIssueCount() >> it
+            repo.getStargazersCount() >> it
+            expectedList.add(repo)
+        }
+        expectedList
     }
 
 }
