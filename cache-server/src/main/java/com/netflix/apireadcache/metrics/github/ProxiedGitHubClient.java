@@ -18,6 +18,7 @@ package com.netflix.apireadcache.metrics.github;
 import feign.Headers;
 import feign.Param;
 import feign.RequestLine;
+import feign.Response;
 
 import static com.netflix.apireadcache.client.ResourcePaths.*;
 
@@ -40,8 +41,8 @@ public interface ProxiedGitHubClient {
     Object getOrganizationMembers(@Param("organizationName") String organizationName);
 
     @Headers({"Content-Type: application/json", "Accept: application/json"})
-    @RequestLine("GET " + ORGS + "/{organizationName}" + REPOS)
-    Object getRepositoryView(@Param("organizationName") String organizationName);
+    @RequestLine("GET " + ORGS + "/{organizationName}" + REPOS + "?page={pageNum}&per_page=100")
+    Response getRepositoryView(@Param("organizationName") String organizationName, @Param("pageNum") int page);
 
     @Headers({"Content-Type: application/json", "Accept: application/json"})
     @RequestLine("GET " + "{path}")

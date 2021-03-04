@@ -18,6 +18,7 @@ package com.netflix.apireadcache.metrics.caching;
 import com.netflix.apireadcache.metrics.MetricType;
 import com.netflix.apireadcache.metrics.github.GithubConfig;
 import com.netflix.apireadcache.metrics.github.ProxiedGitHubClient;
+import com.netflix.apireadcache.metrics.github.GitHubRepositoryPageReader;
 import com.netflix.apireadcache.metrics.proxied.ProxiedMetric;
 import com.netflix.apireadcache.metrics.proxied.ProxiedMetricCache;
 import com.netflix.apireadcache.metrics.proxied.ProxiedMetricCollector;
@@ -98,8 +99,8 @@ public class CacheConfig {
     }
 
     @Bean
-    public ProxiedMetricCache repositoryViewCache(ProxiedGitHubClient client) {
-        ProxiedMetricCollector collector = new ProxiedMetricCollector(MetricType.REPOSITORIES, ()-> new ProxiedMetric(client.getRepositoryView(NETFLIX)));
+    public ProxiedMetricCache repositoryViewCache(GitHubRepositoryPageReader gitHubRepositoryPageReader) {
+        ProxiedMetricCollector collector = new ProxiedMetricCollector(MetricType.REPOSITORIES, ()-> new ProxiedMetric(gitHubRepositoryPageReader.getAllRepositoriesForAllPages(NETFLIX)));
         ProxiedMetricCache cache = new ProxiedMetricCache(collector, cachingStrategy());
         cache.initializeCache();
         return cache;

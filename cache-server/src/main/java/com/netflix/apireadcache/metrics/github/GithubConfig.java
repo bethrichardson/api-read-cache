@@ -1,12 +1,12 @@
 /**
  * Copyright 2021 Netflix, Inc.
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,6 +15,7 @@
  */
 package com.netflix.apireadcache.metrics.github;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.netflix.apireadcache.config.JsonOrTextDecoder;
 import com.spotify.github.v3.clients.GitHubClient;
 import feign.Feign;
@@ -22,9 +23,13 @@ import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 
 import java.net.URI;
 
+@Import({
+        ObjectMapperConfig.class
+})
 @Configuration
 public class GithubConfig {
 
@@ -43,6 +48,15 @@ public class GithubConfig {
         return GithubCredentials.builder()
                 .apiToken(apiToken)
                 .apiUrl(apiUrl)
+                .build();
+    }
+
+    @Bean
+    public GitHubRepositoryPageReader pageTurner(ProxiedGitHubClient client, ObjectMapper mapper) {
+        return GitHubRepositoryPageReader
+                .builder()
+                .objectMapper(mapper)
+                .client(client)
                 .build();
     }
 

@@ -22,6 +22,8 @@ import com.netflix.apireadcache.client.ApiReadCache
 import com.netflix.apireadcache.metrics.github.ProxiedGitHubClient
 import com.spotify.github.v3.clients.RepositoryClient
 import com.spotify.github.v3.repos.Repository
+import feign.Request
+import feign.Response
 import org.springframework.beans.factory.annotation.Autowired
 import spock.lang.Specification
 
@@ -45,7 +47,7 @@ class MetricsResourceSpec extends Specification implements MetricsTestingSupport
     MetricsService metricsService
 
     @Autowired
-    ObjectMapper githubObjectMapper;
+    ObjectMapper mapper
 
     def "should call through to API when unhandled path requested"() {
         given:
@@ -136,9 +138,9 @@ class MetricsResourceSpec extends Specification implements MetricsTestingSupport
         assert actual.toString().contains("fakeid")
     }
 
-    def "should return a flat list of repos when requested"() {
+    def "should return a flat list of paginated repos when requested"() {
         given:
-        Object fakeResult = '''
+        String firstPage = '''
             [  
              {
                 "id": 9533057,
@@ -152,18 +154,51 @@ class MetricsResourceSpec extends Specification implements MetricsTestingSupport
             ]
         '''
 
+        String secondPage = '''
+            [  
+             {
+                "id": 9533057,
+                "full_name": "Netflix/gruesome",
+                "fork": false,
+                "url": "https://api.github.com/repos/Netflix/brutal",
+                "stargazers_count": 194,
+                "forks": 41,
+                "open_issues": 10
+             }
+            ]
+        '''
+
         when:
         metricsService.refreshAllData()
 
         then:
-        1 * cachingGitHubClient.getRepositoryView(NETFLIX) >> fakeResult
+        1 * cachingGitHubClient.getRepositoryView(NETFLIX, 1) >> createResponse(firstPage, true)
+        1 * cachingGitHubClient.getRepositoryView(NETFLIX, 2) >> createResponse(secondPage, false)
 
         when:
         Object actual = metricsCachingClient.getOrganizationRepos(NETFLIX)
 
         then:
         assert actual.toString().contains("brutal")
+        assert actual.toString().contains("gruesome")
     }
+
+    Response createResponse(String response, boolean hasNext) {
+        String linkHeader = hasNext ? linksWithNext : linksNoNext
+        Response.builder()
+                .status(200)
+                .request(Request.create(Request.HttpMethod.GET, "url", [:], null as byte[], null))
+                .headers(["Link": [linkHeader]])
+                .body(response.bytes)
+                .build()
+    }
+
+    private String linksNoNext = "<https://api.github.com/organizations/913567/members?page=1&per_page=100>; rel=\"prev\", " +
+            "<https://api.github.com/organizations/913567/members?page=1&per_page=100>; rel=\"last\", " +
+            "<https://api.github.com/organizations/913567/members?page=1&per_page=100>; rel=\"first\""
+
+    private String linksWithNext = "<https://api.github.com/organizations/913567/repos?page=2&per_page=100>; rel=\"next\", " +
+            "<https://api.github.com/organizations/913567/repos?page=2&per_page=100>; rel=\"last\""
 
     def "should return a list of top N repositories by number of forks"() {
         given:
